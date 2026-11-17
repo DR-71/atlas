@@ -1,0 +1,2269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Atlas IL interactive product demo: AI-guided Anglo Real Estate OS for buying or renting in Israel with neighborhood intelligence, unbiased rent-vs-buy math, property red-flag audits, and independent local specialists." />
+  <title>Atlas IL — Anglo Real Estate OS (Live Platform Demo)</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231d4ed8'/><text x='16' y='22' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='18' fill='white'>A</text></svg>" />
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+      background: var(--background);
+      color: var(--foreground);
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .num { font-variant-numeric: tabular-nums; }
+
+    /* Top Header */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      color: var(--foreground);
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--primary);
+      color: var(--primary-foreground);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 850;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+
+    .brand-sub {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--muted-foreground);
+    }
+
+    .topbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preset-select {
+      appearance: none;
+      background: var(--background);
+      color: var(--foreground);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 30px 7px 12px;
+      font-size: 13px;
+      font-weight: 650;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+
+    .ghost-btn {
+      background: var(--background);
+      color: var(--foreground);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-size: 13px;
+      font-weight: 650;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.14s, border-color 0.14s;
+    }
+    .ghost-btn:hover { background: var(--sidebar); border-color: var(--primary); }
+
+    /* Stepper Navigation Bar */
+    .stepper-wrap {
+      border-top: 1px solid var(--border);
+      background: var(--sidebar);
+    }
+
+    .stepper-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 8px 20px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .step-tab {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted-foreground);
+      border-radius: 9px;
+      padding: 8px 10px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      transition: all 0.14s;
+      min-width: 0;
+    }
+
+    .step-tab:hover {
+      background: var(--card);
+      color: var(--foreground);
+      border-color: var(--border);
+    }
+
+    .step-tab.active {
+      background: var(--card);
+      color: var(--foreground);
+      border-color: var(--primary);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+    }
+
+    .step-tab.completed .step-num {
+      background: var(--success);
+      color: #ffffff;
+      border-color: var(--success);
+    }
+
+    .step-tab.active .step-num {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+    }
+
+    .step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid var(--card-border);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .step-label {
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Main Container */
+    .app-main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 26px 20px 56px;
+    }
+
+    .stage-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .stage-eyebrow {
+      font-size: 12.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .stage-title {
+      font-size: 28px;
+      font-weight: 850;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+    }
+
+    .stage-sub {
+      font-size: 15.5px;
+      color: var(--muted-foreground);
+      margin-top: 5px;
+      max-width: 680px;
+    }
+
+    /* Surfaces & Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.035);
+    }
+
+    .sub-card {
+      background: var(--sidebar);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 16px;
+    }
+
+    /* Grid Helpers */
+    .split-60-40 {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .split-50-50 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    /* Form Controls */
+    .field-block + .field-block { margin-top: 22px; }
+
+    .field-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 14px;
+      font-weight: 750;
+      margin-bottom: 10px;
+      color: var(--foreground);
+    }
+
+    .field-hint {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted-foreground);
+    }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .choice-card {
+      background: var(--sidebar);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 14px;
+      text-align: left;
+      cursor: pointer;
+      color: var(--foreground);
+      transition: all 0.14s;
+    }
+
+    .choice-card:hover { border-color: var(--primary); }
+
+    .choice-card.selected {
+      background: var(--secondary);
+      border-color: var(--primary);
+      color: var(--foreground);
+    }
+
+    .choice-card strong { display: block; font-size: 14.5px; font-weight: 800; }
+    .choice-card span { display: block; font-size: 12.5px; color: var(--muted-foreground); margin-top: 2px; }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip-btn {
+      background: var(--sidebar);
+      color: var(--foreground);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 13.5px;
+      font-weight: 650;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.14s;
+    }
+    .chip-btn:hover { border-color: var(--primary); }
+    .chip-btn.selected {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--primary);
+      cursor: pointer;
+      height: 6px;
+    }
+
+    .text-input {
+      width: 100%;
+      background: var(--background);
+      color: var(--foreground);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 14.5px;
+      font-family: inherit;
+      outline: none;
+    }
+    .text-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+    .badge-blue { background: rgba(29, 78, 216, 0.12); color: var(--primary); }
+    .badge-green { background: rgba(4, 120, 87, 0.12); color: var(--success); }
+    .badge-amber { background: rgba(180, 83, 9, 0.13); color: var(--warning); }
+    .badge-red { background: rgba(220, 38, 38, 0.12); color: var(--error); }
+    .badge-muted { background: var(--sidebar); color: var(--muted-foreground); border: 1px solid var(--border); }
+
+    /* Buttons */
+    .btn-primary {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      border: none;
+      border-radius: 10px;
+      padding: 11px 20px;
+      font-size: 14.5px;
+      font-weight: 750;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: filter 0.14s, transform 0.12s;
+    }
+    .btn-primary:hover { filter: brightness(1.06); }
+    .btn-primary:active { transform: translateY(1px); }
+
+    .btn-secondary {
+      background: var(--card);
+      color: var(--foreground);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .btn-secondary:hover { background: var(--sidebar); border-color: var(--primary); }
+
+    .stage-footer-nav {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Area & Property Cards */
+    .area-card {
+      background: var(--card);
+      border: 1.5px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .area-card:hover { border-color: var(--primary); }
+    .area-card.selected {
+      border-color: var(--primary);
+      box-shadow: 0 6px 20px rgba(29, 78, 216, 0.1);
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      font-size: 13.5px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .metric-row span:first-child { color: var(--muted-foreground); font-weight: 600; }
+    .metric-row span:last-child { color: var(--foreground); font-weight: 750; text-align: right; }
+
+    .prop-item {
+      background: var(--card);
+      border: 1.5px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: all 0.14s;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .prop-item:hover { border-color: var(--primary); }
+    .prop-item.selected {
+      border-color: var(--primary);
+      background: var(--secondary);
+    }
+
+    /* Compare Visual Bar */
+    .bar-track {
+      height: 12px;
+      border-radius: 999px;
+      background: var(--sidebar);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    /* Alert Callouts */
+    .callout-box {
+      border-radius: 11px;
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.45;
+      border: 1px solid var(--border);
+      background: var(--sidebar);
+    }
+    .callout-warn {
+      background: rgba(180, 83, 9, 0.08);
+      border-color: rgba(180, 83, 9, 0.28);
+    }
+    .callout-danger {
+      background: rgba(220, 38, 38, 0.08);
+      border-color: rgba(220, 38, 38, 0.28);
+    }
+    .callout-good {
+      background: rgba(4, 120, 87, 0.08);
+      border-color: rgba(4, 120, 87, 0.28);
+    }
+
+    /* Checklist & Specialist Rows */
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--sidebar);
+      cursor: pointer;
+      transition: border-color 0.14s;
+    }
+    .check-row:hover { border-color: var(--primary); }
+    .check-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 1.5px solid var(--card-border);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-size: 12px;
+      font-weight: 900;
+      background: var(--card);
+      color: transparent;
+    }
+    .check-row.done .check-box {
+      background: var(--success);
+      border-color: var(--success);
+      color: #ffffff;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.65);
+      display: none;
+      place-items: center;
+      padding: 20px;
+      z-index: 90;
+    }
+    .modal-backdrop.open { display: grid; }
+    .modal-panel {
+      background: var(--card);
+      color: var(--foreground);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      max-width: 680px;
+      width: 100%;
+      max-height: 86vh;
+      overflow-y: auto;
+      padding: 26px;
+      box-shadow: 0 24px 60px rgba(2, 6, 23, 0.35);
+    }
+
+    /* Responsive Breakpoints (Works in IDE Preview Pane ~820px and Mobile) */
+    @media (max-width: 900px) {
+      .split-60-40, .split-50-50, .grid-3 { grid-template-columns: 1fr; }
+      #step1-brief-slot { position: static !important; }
+      .stepper-inner { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; padding: 8px 12px; }
+      .step-tab { justify-content: center; padding: 7px 6px; }
+      .step-label { display: none; }
+      .step-tab.active .step-label { display: inline; }
+    }
+
+    @media (max-width: 640px) {
+      .option-grid, .grid-2 { grid-template-columns: 1fr; }
+      .stage-title { font-size: 23px; }
+      .topbar-inner { padding: 10px 14px; }
+      .app-main { padding: 18px 14px 42px; }
+    }
+
+    @media print {
+      .topbar, .stepper-wrap, .stage-footer-nav { display: none !important; }
+      body { background: #ffffff; color: #0f172a; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="#top" class="brand" id="brand-reset">
+        <div class="brand-mark">A</div>
+        <div>
+          <div class="brand-title">ATLAS IL <span style="font-weight:600; color:var(--muted-foreground);">· Guided OS</span></div>
+          <div class="brand-sub">Discovery to Closing for Olim &amp; Global Buyers</div>
+        </div>
+      </a>
+
+      <div class="topbar-controls">
+        <select id="preset-select" class="preset-select" aria-label="Switch client demo persona">
+          <option value="aliyah">Demo Persona: Relocating US Family (Aliyah)</option>
+          <option value="investor">Demo Persona: Remote US Investor (50% LTV)</option>
+          <option value="renter">Demo Persona: Year-1 Renter (Try Before Buy)</option>
+        </select>
+        <button id="btn-sources" class="ghost-btn" type="button">Data &amp; Guardrails</button>
+        <button id="btn-theme" class="ghost-btn" type="button" aria-label="Toggle Light/Dark theme">Theme</button>
+      </div>
+    </div>
+
+    <!-- 5-Step Journey Bar -->
+    <nav class="stepper-wrap" aria-label="Platform workflow stages">
+      <div class="stepper-inner" id="stepper-nav">
+        <button class="step-tab active" data-step="0" type="button">
+          <span class="step-num">1</span>
+          <span class="step-label">Profile &amp; Goal</span>
+        </button>
+        <button class="step-tab" data-step="1" type="button">
+          <span class="step-num">2</span>
+          <span class="step-label">Area Match</span>
+        </button>
+        <button class="step-tab" data-step="2" type="button">
+          <span class="step-num">3</span>
+          <span class="step-label">Rent vs. Buy</span>
+        </button>
+        <button class="step-tab" data-step="3" type="button">
+          <span class="step-num">4</span>
+          <span class="step-label">Home Guard</span>
+        </button>
+        <button class="step-tab" data-step="4" type="button">
+          <span class="step-num">5</span>
+          <span class="step-label">Deal Team</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Active Workspace View -->
+  <main class="app-main" id="app-stage"></main>
+
+  <!-- Data & Compliance Modal -->
+  <div class="modal-backdrop" id="sources-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px;">
+        <div>
+          <span class="badge badge-blue">Transparency &amp; Architecture</span>
+          <h2 id="modal-title" style="font-size:21px; font-weight:850; margin-top:6px;">How Atlas Grounds Data &amp; Stays Compliant</h2>
+        </div>
+        <button id="btn-close-modal" class="ghost-btn" type="button">Close</button>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px; font-size:14.5px;">
+        <div class="sub-card">
+          <strong style="display:block; margin-bottom:4px;">1. Realistic Listing &amp; Neighborhood Data (No Fictional Gov APIs)</strong>
+          <p style="color:var(--muted-foreground);">
+            Israeli cities and the Tabu land registry do not offer unified MLS feeds or open APIs for live listings. Atlas combines direct structured feeds from participating partner brokers/developers, real public parcel/zoning reference layers where published, and local specialist verification for schools, synagogues, commutes, and safety.
+          </p>
+        </div>
+        <div class="sub-card">
+          <strong style="display:block; margin-bottom:4px;">2. Undocumented Space Protection</strong>
+          <p style="color:var(--muted-foreground);">
+            Converted basements, enclosed balconies, and roof additions rarely appear in public records. Atlas compares seller declarations against uploaded Tabu deeds and municipal Arnona bills—and dispatches an independent licensed appraiser before an offer is signed.
+          </p>
+        </div>
+        <div class="sub-card">
+          <strong style="display:block; margin-bottom:4px;">3. Legal &amp; Broker Ethics Guardrails</strong>
+          <p style="color:var(--muted-foreground);">
+            Your real estate lawyer leads the contract and protects your interests. Per <strong>Israel Bar Assoc. Law Sec. 58</strong>, Atlas charges <strong>&#8362;0</strong> lawyer referral or split fees. Partner brokerage introductions operate through a licensed entity with explicit written consent (<strong>2025 Brokers Ethics</strong>), separate from FX, lending, and insurance partners.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exported Brief Modal -->
+  <div class="modal-backdrop" id="brief-modal" role="dialog" aria-modal="true" aria-labelledby="brief-title">
+    <div class="modal-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px;">
+        <div>
+          <span class="badge badge-green">Client Ready</span>
+          <h2 id="brief-title" style="font-size:21px; font-weight:850; margin-top:6px;">Personal Israel Relocation &amp; Deal Brief</h2>
+        </div>
+        <button id="btn-close-brief" class="ghost-btn" type="button">Close</button>
+      </div>
+      <div id="brief-content" style="display:flex; flex-direction:column; gap:12px; font-size:14px;"></div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:18px;">
+        <button id="btn-copy-brief" class="btn-secondary" type="button">Copy Summary</button>
+        <button id="btn-print-brief" class="btn-primary" type="button">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      /* ---------------- Semantic Theme Tokens (Light + Dark) ---------------- */
+      const LIGHT_TOKENS = {
+        "--background": "#f1f5f9",
+        "--card": "#ffffff",
+        "--content": "#ffffff",
+        "--sidebar": "#f8fafc",
+        "--foreground": "#0f172a",
+        "--muted-foreground": "#475569",
+        "--border": "#e2e8f0",
+        "--card-border": "#cbd5e1",
+        "--primary": "#1d4ed8",
+        "--primary-foreground": "#ffffff",
+        "--secondary": "#eff6ff",
+        "--secondary-foreground": "#1e40af",
+        "--accent": "#0284c7",
+        "--success": "#047857",
+        "--warning": "#b45309",
+        "--error": "#dc2626"
+      };
+
+      const DARK_TOKENS = {
+        "--background": "#0b1120",
+        "--card": "#111827",
+        "--content": "#111827",
+        "--sidebar": "#162032",
+        "--foreground": "#f8fafc",
+        "--muted-foreground": "#94a3b8",
+        "--border": "#1e293b",
+        "--card-border": "#334155",
+        "--primary": "#3b82f6",
+        "--primary-foreground": "#ffffff",
+        "--secondary": "#172554",
+        "--secondary-foreground": "#bfdbfe",
+        "--accent": "#38bdf8",
+        "--success": "#10b981",
+        "--warning": "#f59e0b",
+        "--error": "#ef4444"
+      };
+
+      let manualTheme = null;
+
+      function applyTheme() {
+        const root = document.documentElement;
+        const sysDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const useDark = manualTheme ? manualTheme === "dark" : (root.classList.contains("dark") || (!root.classList.contains("light") && sysDark));
+        const tokens = useDark ? DARK_TOKENS : LIGHT_TOKENS;
+        for (const [k, v] of Object.entries(tokens)) {
+          root.style.setProperty(k, v);
+        }
+        const btn = document.getElementById("btn-theme");
+        if (btn) btn.textContent = useDark ? "Light Mode" : "Dark Mode";
+      }
+
+      /* ---------------- Domain Dataset (Honest, Realistic Israel Data) ---------------- */
+      const FX_RATE = 3.65; // NIS per USD
+
+      const AREAS = [
+        {
+          id: "katamon",
+          name: "Old Katamon",
+          city: "Jerusalem",
+          tagline: "Established Anglo community · Walkable leafy streets",
+          angloShare: "42% Anglo · High family density",
+          shulsSchools: "8+ Orthodox shuls · Top bilingual schools",
+          commuteTraffic: "12 min light rail to Center · Tight street parking",
+          safetyWalk: "Very safe · 92 Walk Score",
+          buyPriceNis: 3900000,
+          rentMonthNis: 10200,
+          arnonaMonthNis: 980,
+          yieldPct: 3.1,
+          tags: ["shuls", "schools", "walkable", "aliyah"],
+          nuance: "1960s–1980s Jerusalem stone walk-ups often lack elevators or Mamads; always inspect ground/roof extensions against Tabu deeds.",
+          listings: [
+            {
+              id: "kat-clean",
+              source: "Partner Agency Feed",
+              title: "HaPalmach St · 4-Room Stone Apartment (3BR)",
+              priceNis: 3850000,
+              rentNis: 10000,
+              roomsLabel: "4 Israeli Rooms (= 3 Bedrooms)",
+              deedSqm: 96,
+              listedSqm: 98,
+              arnonaSqm: 98,
+              mamad: "Private Mamad (Added 2019)",
+              sukkah: "11 m² Open Sukkah Balcony",
+              floor: "Floor 2 of 4 · Elevator",
+              guardStatus: "pass",
+              guardLabel: "Clean Match",
+              guardDetail: "Tabu deed (96 m²) matches Arnona bill (98 m²) within standard wall allowance. Building Tofes 4 permits verified.",
+              qa: {
+                rooms: "In Israel, the living room counts as Room #1. This '4-room' home has 3 true bedrooms + living room.",
+                permit: "Clear. The 2019 TAMA upgrade added a legal Mamad and elevator with municipality sign-off.",
+                offer: "Wait! Never sign a Zichron Devarim. Route the seller draft straight to your Jerusalem real estate lawyer."
+              }
+            },
+            {
+              id: "kat-flag",
+              source: "Partner Agency Feed",
+              title: "Kovshei Katamon · 5-Room Garden Duplex (4BR)",
+              priceNis: 4200000,
+              rentNis: 11800,
+              roomsLabel: "Listed 5 Rooms (1 Basement Room Undocumented)",
+              deedSqm: 95,
+              listedSqm: 135,
+              arnonaSqm: 102,
+              mamad: "Shared Building Miklat Only",
+              sukkah: "35 m² Private Courtyard",
+              floor: "Ground + Dug-out Basement",
+              guardStatus: "danger",
+              guardLabel: "Permit Red Flag",
+              guardDetail: "Listing markets 135 m², yet Tabu deed records only 95 m². Seller dug out a 40 m² basement bedroom without municipal permit. Bank appraisal will ignore those 40 m², cutting mortgage loan eligibility by ~₪520K!",
+              qa: {
+                rooms: "Only 3 bedrooms sit on the legal ground floor; the 4th bedroom is in an unpermitted dug-out cellar.",
+                permit: "Critical risk: Municipal inspector fines or demolition orders transfer to the buyer, and banks refuse to lend on illegal area.",
+                offer: "Mandatory pre-offer pause. Order a licensed Shamai (appraiser) valuation before paying any deposit or signing counsel contracts."
+              }
+            }
+          ]
+        },
+        {
+          id: "modiin",
+          name: "Buchman / Moriah",
+          city: "Modi'in",
+          tagline: "Master-planned family hub halfway between JLM & TLV",
+          angloShare: "34% Anglo · Young families",
+          shulsSchools: "6 modern shuls · National-Religious & secular schools",
+          commuteTraffic: "22 min fast rail to TLV & JLM · Easy parking",
+          safetyWalk: "High family safety · Parks on every block",
+          buyPriceNis: 3450000,
+          rentMonthNis: 8900,
+          arnonaMonthNis: 860,
+          yieldPct: 3.1,
+          tags: ["shuls", "schools", "rail", "mamad", "sukkah", "aliyah"],
+          nuance: "Newer concrete builds (post-2000) almost always include Mamads and parking; watch hill steepness for daily strollers.",
+          listings: [
+            {
+              id: "mod-presale",
+              source: "Verified Builder Partner",
+              title: "Moriah Heights · New 4.5-Room Garden Apt (3BR + Den)",
+              priceNis: 3490000,
+              rentNis: 9100,
+              roomsLabel: "4.5 Rooms (3BR + Living Room + Half Study)",
+              deedSqm: 118,
+              listedSqm: 134,
+              arnonaSqm: 122,
+              mamad: "Standard Concrete Mamad + Filtered Air",
+              sukkah: "16 m² Covered/Open Sukkah Patio",
+              floor: "Floor 1 · 2 Underground Parking Spots",
+              guardStatus: "warn",
+              guardLabel: "Index & Fee Check",
+              guardDetail: "Clean permit and Bank Guarantee Law (Chok HaMecher) voucher protection included. Note: unpaid balance links 40% to Madad Construction Index (+₪45K–85K exposure) plus mandatory builder legal fee (₪6,000 + VAT) for registration—you STILL need your own buyer lawyer.",
+              qa: {
+                rooms: "Half-room (chatzi cheder) typically fits a nursery or home office; note builder gross sqm (134 m²) includes wall share.",
+                permit: "Full municipal building permit active; buyer payments sit safely in a dedicated bank escrow account.",
+                offer: "Have your independent lawyer negotiate index caps and delivery delay penalties—the developer's lawyer represents only the builder."
+              }
+            }
+          ]
+        },
+        {
+          id: "raanana",
+          name: "Lev HaIr / Center",
+          city: "Ra'anana",
+          tagline: "Polished Sharon hub for tech commuters & families",
+          angloShare: "28% Anglo & South African",
+          shulsSchools: "7 shuls · Renowned Anglo ulpan & STEM schools",
+          commuteTraffic: "Bus/rail to Herzliya & TLV · Moderate morning Ahuza traffic",
+          safetyWalk: "Calm suburban core · Flat bikeable grid",
+          buyPriceNis: 3750000,
+          rentMonthNis: 9600,
+          arnonaMonthNis: 920,
+          yieldPct: 3.1,
+          tags: ["schools", "shuls", "walkable", "rail", "mamad"],
+          nuance: "Renting Year-1 here is extremely common while testing school commutes; note Israeli leases push AC, boiler, and plumbing repairs onto tenants.",
+          listings: [
+            {
+              id: "ran-clean",
+              source: "Partner Agency Feed",
+              title: "Brandeis St · Renovated 4-Room Apt (3BR)",
+              priceNis: 3720000,
+              rentNis: 9500,
+              roomsLabel: "4 Rooms (3 Bedrooms + Spacious Salon)",
+              deedSqm: 108,
+              listedSqm: 112,
+              arnonaSqm: 110,
+              mamad: "Private Mamad + Elevator",
+              sukkah: "10 m² Sun Balcony (Half Overhang)",
+              floor: "Floor 3 of 6 · Covered Parking",
+              guardStatus: "pass",
+              guardLabel: "Lease & Buy Ready",
+              guardDetail: "Clean Tabu ownership registration (no caveated liens). Rental contract requires standard ₪30K bank guarantee + tenant repair clause clarification before move-in.",
+              qa: {
+                rooms: "Three full bedrooms plus salon. Kitchen appliances are NOT guaranteed unless listed in the contract appendix.",
+                permit: "Fully verified. One small pergola shade covers half the balcony—half fits kosher Sukkah clearance.",
+                offer: "If renting first, have counsel add a 60-day exit clause and cap landlord repair delays at 48 hours."
+              }
+            }
+          ]
+        },
+        {
+          id: "telaviv",
+          name: "Old North / Lev TLV",
+          city: "Tel Aviv",
+          tagline: "Vibrant urban core · Strong liquidity & global appeal",
+          angloShare: "18% Int'l & Tech Expat",
+          shulsSchools: "Historic shuls · Int'l & secular top schools",
+          commuteTraffic: "Walk/bike everywhere · Severe car parking crunch",
+          safetyWalk: "High activity · 97 Walk Score",
+          buyPriceNis: 4950000,
+          rentMonthNis: 13200,
+          arnonaMonthNis: 1120,
+          yieldPct: 3.2,
+          tags: ["walkable", "rail", "investor", "mamad"],
+          nuance: "Frequent TAMA 38 urban renewal projects mean loud nearby construction and shifting views; always check street-block permit applications.",
+          listings: [
+            {
+              id: "tlv-flag",
+              source: "Partner Agency Feed",
+              title: "Ben Yehuda Side St · Top-Floor 3-Room Loft (2BR)",
+              priceNis: 4850000,
+              rentNis: 13000,
+              roomsLabel: "3 Rooms + Enclosed Sun Balcony + Roof Deck",
+              deedSqm: 78,
+              listedSqm: 96,
+              arnonaSqm: 84,
+              mamad: "No Mamad · Ground Miklat",
+              sukkah: "18 m² Roof Deck (Usage Rights Check)",
+              floor: "Floor 4 (Top) · No Elevator",
+              guardStatus: "warn",
+              guardLabel: "Roof Rights Audit",
+              guardDetail: "Seller enclosed a 10 m² terrace and treats shared building roof space as private. Lawyer must verify shared condominium bylaws (Takanon) before purchase!",
+              qa: {
+                rooms: "Two bedrooms plus salon. Compact Tel Aviv kitchen layout.",
+                permit: "Warning: Shared roofs require 100% neighbor deed assignment in writing to count as private asset.",
+                offer: "Request full Tabu apartment extract (Nesach Bayit Meshutaf) through buyer counsel first."
+              }
+            }
+          ]
+        },
+        {
+          id: "rbs",
+          name: "Ramat Beit Shemesh A",
+          city: "Beit Shemesh",
+          tagline: "Budget-friendly large family living · Tight Anglo network",
+          angloShare: "55%+ Anglo Community",
+          shulsSchools: "25+ shuls · Wide Yeshiva & Anglo school network",
+          commuteTraffic: "Route 38 rush-hour bottlenecks · 45 min to JLM/TLV",
+          safetyWalk: "Warm community feel · Hills & parks",
+          buyPriceNis: 2750000,
+          rentMonthNis: 7400,
+          arnonaMonthNis: 720,
+          yieldPct: 3.2,
+          tags: ["shuls", "schools", "sukkah", "mamad", "aliyah"],
+          nuance: "Many homes feature informal Machsan (storage) to bedroom conversions or split basement rental units; verify legality strictly before underwriting.",
+          listings: [
+            {
+              id: "rbs-flag",
+              source: "Partner Agency Feed",
+              title: "Nachal Dolev · 5-Room Duplex + 'Side Unit' (4BR)",
+              priceNis: 2890000,
+              rentNis: 7800,
+              roomsLabel: "5 Rooms + '1BR Rental Suite'",
+              deedSqm: 122,
+              listedSqm: 162,
+              arnonaSqm: 126,
+              mamad: "Private Mamad",
+              sukkah: "22 m² Full Sukkah Terrace",
+              floor: "Split Entry · Storage Conversion",
+              guardStatus: "danger",
+              guardLabel: "Split-Unit Risk",
+              guardDetail: "Advertised 'income unit' was converted from a legal storage room (Machsan) with an illegal second utility meter. City prohibits residential splitting; bank appraisal excludes rental value.",
+              qa: {
+                rooms: "Main unit has 4 legal rooms; the extra rental suite lacks residential zoning occupancy.",
+                permit: "High audit risk: Beit Shemesh inspectors issue heavy municipal Arnona penalties on unauthorized split units.",
+                offer: "Price the purchase purely on the 122 m² legal deed and verify whether conversion can be cured or reversed."
+              }
+            }
+          ]
+        },
+        {
+          id: "netanya",
+          name: "Ir Yamim",
+          city: "Netanya",
+          tagline: "Coastal high-rises · Resort amenities & strong expat hub",
+          angloShare: "36% Anglo & French Expats",
+          shulsSchools: "Beachfront shuls · Anglo youth centers & mall",
+          commuteTraffic: "Easy Coastal Hwy (Rt 2) · Rail access at Sapir",
+          safetyWalk: "Gated lobbies, gyms & seafront paths",
+          buyPriceNis: 3650000,
+          rentMonthNis: 9800,
+          arnonaMonthNis: 1050,
+          yieldPct: 3.2,
+          tags: ["investor", "shuls", "mamad", "sukkah"],
+          nuance: "Luxury towers carry steep monthly Va'ad Bayit (HOA) fees (₪900–₪1,800/mo) for pools & guards—factor this directly into rental yield.",
+          listings: [
+            {
+              id: "net-clean",
+              source: "Verified Builder Partner",
+              title: "Ir Yamim Sea-View Tower · 4-Room Modern Unit (3BR)",
+              priceNis: 3680000,
+              rentNis: 9900,
+              roomsLabel: "4 Rooms (3BR) · Full Concrete Code",
+              deedSqm: 114,
+              listedSqm: 120,
+              arnonaSqm: 116,
+              mamad: "Modern Mamad + Hurricane Glazing",
+              sukkah: "15 m² Sea-Facing Terrace",
+              floor: "Floor 9 · 2 Parking + Storage",
+              guardStatus: "pass",
+              guardLabel: "Clear + HOA Alert",
+              guardDetail: "Deed and permits clean. High monthly HOA/Va'ad Bayit (~₪1,350/mo) lowers net rental yield from 3.2% gross to ~2.7% net—transparently modeled in your brief.",
+              qa: {
+                rooms: "Modern open-plan kitchen + 3 bedrooms with en-suite master bath.",
+                permit: "Clean Tabu & modern coastal engineering code.",
+                offer: "Review building management company contract & reserve fund status via buyer counsel."
+              }
+            }
+          ]
+        }
+      ];
+
+      const SPECIALISTS = [
+        {
+          id: "lawyer",
+          role: "1. Buyer's Real Estate Counsel",
+          tag: "Essential First Hire",
+          tagClass: "badge-blue",
+          partnerName: "Adv. Michal Sternberg & Co.",
+          lang: "US-trained Israeli Adv. · English & Hebrew",
+          fee: "0.5% + VAT (Paid to firm; ₪0 Atlas fee)",
+          why: "Leads the deal in Israel: pulls full Tabu extract, stops Zichron Devarim traps, negotiates seller contract, and files Mas Rechisha.",
+          compliance: "Bar Assoc. Sec. 58 Compliant: Atlas takes ₪0 referral cut."
+        },
+        {
+          id: "broker",
+          role: "2. Independent Local Broker",
+          tag: "Local Tour & Sourcing",
+          tagClass: "badge-green",
+          partnerName: "Nadav Mizrahi Homes / Local Network",
+          lang: "Bilingual Neighborhood Specialist",
+          fee: "Standard client fee or Builder-paid (Written order)",
+          why: "Gives off-market street access, coordinates inspections, and runs co-brokered showings under clear written client consent.",
+          compliance: "March 2025 Brokers Ethics: Mandatory written agreement & split disclosure."
+        },
+        {
+          id: "mortgage",
+          role: "3. Cross-Border Mortgage Advisor",
+          tag: "50% vs 75% LTV",
+          tagClass: "badge-blue",
+          partnerName: "Sharon Capital Israel Mortgages",
+          lang: "Specializes in US/UK W-2 & Foreign Assets",
+          fee: "Flat ~₪8,500 on bank funding",
+          why: "Structures blended Fixed / Prime / CPI tracks, navigates foreign income underwriting, and prevents surprise appraisal shortfalls.",
+          compliance: "Direct lender coordination across Leumi, Mizrahi-Tefahot & Hapoalim."
+        },
+        {
+          id: "fx",
+          role: "4. Licensed FX & Wire Desk",
+          tag: "Saves ~1.5%–2.5% vs Banks",
+          tagClass: "badge-amber",
+          partnerName: "ClearShekel Institutional FX",
+          lang: "USD/GBP -> ILS Escrow Transfers",
+          fee: "~0.4% spread (vs. ~2% retail bank FX)",
+          why: "Pre-clears foreign Bank of Israel source-of-funds AML docs weeks ahead of closing so your payment clears without wire holds.",
+          compliance: "ISA / Capital Market licensed payment provider."
+        }
+      ];
+
+      /* ---------------- Application State ---------------- */
+      const state = {
+        step: 0,
+        preset: "aliyah",
+        goal: "buy_aliyah", // buy_aliyah | rent_first | invest_remote
+        budgetNis: 3900000,
+        priorities: ["shuls", "schools", "walkable"],
+        promptText: "Walkable community near shuls and good English-friendly schools",
+        selectedAreaId: "katamon",
+        horizonYears: 5,
+        statusType: "oleh", // oleh | foreign | citizen
+        downPaymentNis: 1400000,
+        growthMode: "moderate", // conservative (2%) | moderate (4.5%) | flat (0%)
+        selectedListingId: "kat-flag",
+        activeQaKey: "permit",
+        useFxPartner: true,
+        selectedPros: { lawyer: true, broker: true, mortgage: true, fx: true },
+        checklist: {
+          c1: true,
+          c2: false,
+          c3: false,
+          c4: false,
+          c5: false
+        }
+      };
+
+      const PRESETS = {
+        aliyah: {
+          goal: "buy_aliyah",
+          budgetNis: 3900000,
+          priorities: ["shuls", "schools", "walkable"],
+          promptText: "Walkable Jerusalem or Modi'in area with shuls and great Anglo schools",
+          selectedAreaId: "katamon",
+          horizonYears: 6,
+          statusType: "oleh",
+          downPaymentNis: 1500000,
+          growthMode: "moderate",
+          selectedListingId: "kat-flag"
+        },
+        investor: {
+          goal: "invest_remote",
+          budgetNis: 4850000,
+          priorities: ["walkable", "rail", "mamad"],
+          promptText: "Liquid city apartment for remote ownership with strong rental demand",
+          selectedAreaId: "telaviv",
+          horizonYears: 7,
+          statusType: "foreign",
+          downPaymentNis: 2700000,
+          growthMode: "moderate",
+          selectedListingId: "tlv-flag"
+        },
+        renter: {
+          goal: "rent_first",
+          budgetNis: 3750000,
+          priorities: ["schools", "shuls", "rail"],
+          promptText: "Soft-landing 1-year rental to learn schools and test commute before buying",
+          selectedAreaId: "raanana",
+          horizonYears: 2,
+          statusType: "oleh",
+          downPaymentNis: 1100000,
+          growthMode: "moderate",
+          selectedListingId: "ran-clean"
+        }
+      };
+
+      /* ---------------- Financial & Match Helpers ---------------- */
+      function fmtNis(n) {
+        if (n >= 1000000) return "₪" + (n / 1000000).toFixed(2).replace(/\.00$/, "") + "M";
+        return "₪" + Math.round(n).toLocaleString("en-US");
+      }
+
+      function fmtUsd(nis) {
+        const usd = nis / FX_RATE;
+        if (usd >= 1000000) return "~$" + (usd / 1000000).toFixed(2) + "M";
+        if (usd >= 10000) return "~$" + Math.round(usd / 1000) + "K";
+        return "~$" + Math.round(usd).toLocaleString("en-US");
+      }
+
+      function calcMasRechisha(priceNis, statusType) {
+        if (statusType === "foreign") {
+          // Non-resident / second-home bracket (~8% up to 6.05M)
+          const b1 = Math.min(priceNis, 6055070) * 0.08;
+          const b2 = Math.max(0, priceNis - 6055070) * 0.10;
+          return Math.round(b1 + b2);
+        }
+        if (statusType === "oleh") {
+          // Oleh Chadash progressive discount rate (~0.5% up to ~1.98M, 5% above)
+          const b1 = Math.min(priceNis, 1980000) * 0.005;
+          const b2 = Math.max(0, priceNis - 1980000) * 0.05;
+          return Math.round(b1 + b2);
+        }
+        // Single home citizen: 0% to 1.98M, 3.5% to 2.35M, 5% above
+        let tax = 0;
+        if (priceNis > 1978745) tax += (Math.min(priceNis, 2347040) - 1978745) * 0.035;
+        if (priceNis > 2347040) tax += (Math.min(priceNis, 6055070) - 2347040) * 0.05;
+        if (priceNis > 6055070) tax += (priceNis - 6055070) * 0.08;
+        return Math.round(tax);
+      }
+
+      function scoreArea(area) {
+        let score = 54;
+        // Priority fit (weighted proportionally up to +22 pts)
+        if (state.priorities.length > 0) {
+          const hits = state.priorities.filter(p => area.tags.includes(p)).length;
+          score += Math.round((hits / state.priorities.length) * 22);
+        } else {
+          score += 12;
+        }
+
+        // Goal alignment (+4 to +9 pts)
+        if (state.goal === "invest_remote") {
+          if (area.tags.includes("investor")) score += 9;
+          if (area.yieldPct >= 3.2) score += 2;
+        } else if (state.goal === "rent_first") {
+          if (area.id === "raanana") score += 9;
+          else if (area.id === "modiin") score += 7;
+          else if (area.id === "katamon") score += 6;
+          else if (area.tags.includes("schools")) score += 3;
+        } else {
+          if (area.id === "katamon") score += 9;
+          else if (area.tags.includes("aliyah")) score += 6;
+          else if (area.tags.includes("schools")) score += 4;
+        }
+
+        // Continuous budget proximity (+10 exact down to -12 mismatched)
+        const diffRatio = Math.abs(area.buyPriceNis - state.budgetNis) / Math.max(state.budgetNis, 1);
+        score += Math.max(-12, Math.round(10 - diffRatio * 28));
+
+        // Prompt keyword match
+        const q = (state.promptText || "").toLowerCase();
+        if (q.includes(area.name.toLowerCase()) || q.includes(area.city.toLowerCase())) score += 5;
+        if ((q.includes("beach") || q.includes("sea")) && (area.id === "netanya" || area.id === "telaviv")) score += 6;
+        if ((q.includes("cheap") || q.includes("budget") || q.includes("large")) && (area.id === "rbs" || area.id === "modiin")) score += 5;
+        if ((q.includes("rail") || q.includes("train") || q.includes("commute")) && area.tags.includes("rail")) score += 4;
+        if ((q.includes("walk") || q.includes("quiet")) && area.tags.includes("walkable")) score += 3;
+
+        return Math.max(60, Math.min(97, score));
+      }
+
+      function getRankedAreas() {
+        return [...AREAS]
+          .map(a => ({ ...a, fitScore: scoreArea(a) }))
+          .sort((a, b) => b.fitScore - a.fitScore);
+      }
+
+      function getSelectedArea() {
+        const ranked = getRankedAreas();
+        return ranked.find(a => a.id === state.selectedAreaId) || ranked[0];
+      }
+
+      function getSelectedListing(area) {
+        const list = area.listings || [];
+        return list.find(l => l.id === state.selectedListingId) || list[0];
+      }
+
+      function calcFinancialComparison(area) {
+        const price = area.buyPriceNis;
+        const maxLtv = state.statusType === "foreign" ? 0.50 : 0.75;
+        const maxLoan = price * maxLtv;
+        const minCashRequired = price * (1 - maxLtv);
+        const tax = calcMasRechisha(price, state.statusType);
+        const olehTax = calcMasRechisha(price, "oleh");
+        const legalClosing = Math.round(price * 0.006); // ~0.5% + VAT + search fees
+        const brokerClosing = Math.round(price * 0.015); // avg 1%–2% + VAT when applicable
+        const retailFxSpread = Math.round(state.downPaymentNis * 0.02);
+        const partnerFxSpread = Math.round(state.downPaymentNis * 0.004);
+        const fxFee = state.useFxPartner ? partnerFxSpread : retailFxSpread;
+
+        const totalUpfrontClosing = tax + legalClosing + brokerClosing + fxFee;
+        const totalCashNeeded = minCashRequired + totalUpfrontClosing;
+        const cashShortfall = Math.max(0, totalCashNeeded - state.downPaymentNis);
+
+        const actualLoan = Math.max(0, Math.min(maxLoan, price - Math.min(state.downPaymentNis, price)));
+        // Blended 25-year ~4.8% annual IL rate
+        const r = 0.048 / 12;
+        const n = 300;
+        const monthlyMortgage = actualLoan > 0 ? Math.round(actualLoan * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1)) : 0;
+
+        // Horizon projection
+        const growthRate = state.growthMode === "conservative" ? 0.02 : state.growthMode === "moderate" ? 0.045 : 0.0;
+        const years = state.horizonYears;
+        const rentTotalPaid = Math.round(area.rentMonthNis * 12 * years * (1 + 0.015 * (years / 2))); // avg mild rent escalation
+        const avgMaintenanceYr = 4800; // tenant repairs under IL lease norm
+        const netRentOutflow = rentTotalPaid + avgMaintenanceYr * years;
+
+        const priceFuture = price * Math.pow(1 + growthRate, years);
+        const appreciation = priceFuture - price;
+        const buyOutflowInterestAndFees = totalUpfrontClosing + Math.round(actualLoan * 0.045 * years * 0.85) + 6000 * years;
+        const netBuyPosition = buyOutflowInterestAndFees - appreciation; // lower = better
+
+        let verdict = "balanced";
+        let verdictTitle = "Balanced Tradeoff — Let Lifestyle Lead";
+        let verdictReason = "Buying and renting stay financially close across a " + years + "-year horizon. Your tax clock and down payment liquidity determine the cleaner path.";
+
+        if (cashShortfall > 150000 || years <= 2 || state.goal === "rent_first") {
+          verdict = "rent";
+          verdictTitle = "Rent First Holds Clear Advantage";
+          if (cashShortfall > 150000) {
+            verdictReason = "With " + (maxLtv * 100) + "% max LTV and closing costs, buying requires " + fmtNis(cashShortfall) + " more cash upfront. Leasing keeps liquidity intact while testing the neighborhood.";
+          } else {
+            verdictReason = "Over a " + years + "-year stay, upfront purchase tax (" + fmtNis(tax) + ") and closing friction outweigh near-term equity buildup. Renting lets you verify schools and commutes safely.";
+          }
+        } else if (years >= 5 && cashShortfall === 0 && growthRate > 0) {
+          verdict = "buy";
+          verdictTitle = "Buying Pulls Ahead Over " + years + " Years";
+          verdictReason = "Over " + years + " years with sufficient down payment (" + (maxLtv * 100) + "% LTV met), equity growth offsets closing costs—especially if utilizing the Oleh tax discount.";
+        }
+
+        return {
+          price, maxLtv, minCashRequired, tax, olehTax,
+          taxSavingsVsForeign: Math.max(0, calcMasRechisha(price, "foreign") - olehTax),
+          legalClosing, brokerClosing, retailFxSpread, partnerFxSpread, fxFee,
+          fxSavings: retailFxSpread - partnerFxSpread,
+          totalUpfrontClosing, totalCashNeeded, cashShortfall,
+          actualLoan, monthlyMortgage,
+          rentMonth: area.rentMonthNis, netRentOutflow, netBuyPosition,
+          appreciation, years, verdict, verdictTitle, verdictReason
+        };
+      }
+
+      /* ---------------- Render Engine ---------------- */
+      function updateStepperUI() {
+        document.querySelectorAll(".step-tab").forEach((el, idx) => {
+          el.classList.toggle("active", idx === state.step);
+          el.classList.toggle("completed", idx < state.step);
+        });
+      }
+
+      function render(shouldScroll = false) {
+        updateStepperUI();
+        const root = document.getElementById("app-stage");
+        if (state.step === 0) root.innerHTML = renderStep1();
+        else if (state.step === 1) root.innerHTML = renderStep2();
+        else if (state.step === 2) root.innerHTML = renderStep3();
+        else if (state.step === 3) root.innerHTML = renderStep4();
+        else root.innerHTML = renderStep5();
+
+        bindStageEvents();
+        if (shouldScroll) window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      /* ---------------- STEP 1: CLIENT INTAKE ---------------- */
+      function renderStep1BriefHtml() {
+        const area = getSelectedArea();
+        const isOlehEligible = state.statusType !== "foreign";
+        const ltvNote = state.statusType === "foreign"
+          ? "Foreign Buyer Cap: 50% max mortgage LTV · 8% purchase tax from Shekel 1"
+          : state.statusType === "oleh"
+          ? "Oleh Chadash Window: Up to 75% LTV · Progressive 0.5%–5% purchase tax discount (~₪235K savings)"
+          : "Resident Single Home: Up to 75% LTV · 0% tax up to ~₪1.98M";
+
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted-foreground);">Live Client Brief</span>
+            <span class="badge badge-green">Ready to Match</span>
+          </div>
+
+          <div>
+            <div style="font-size:20px; font-weight:850; line-height:1.25;">${area.name}, ${area.city}</div>
+            <p style="font-size:14px; color:var(--muted-foreground); margin-top:4px;">Top predicted fit based on your current intake signals (${area.fitScore}% match).</p>
+          </div>
+
+          <div class="sub-card" style="display:flex; flex-direction:column; gap:10px; font-size:13.5px;">
+            <div class="metric-row" style="border-top:none; padding-top:0;">
+              <span>Mode</span>
+              <span>${state.goal === "rent_first" ? "Year-1 Soft Landing Lease" : state.goal === "invest_remote" ? "Remote Asset Strategy" : "Aliyah Family Relocation"}</span>
+            </div>
+            <div class="metric-row">
+              <span>Tax &amp; Loan Rule</span>
+              <span style="color:var(--primary);">${isOlehEligible ? "75% Max LTV" : "50% Foreign LTV"}</span>
+            </div>
+            <div class="metric-row">
+              <span>Budget Band</span>
+              <span class="num">${fmtNis(state.budgetNis)} (${fmtUsd(state.budgetNis)})</span>
+            </div>
+          </div>
+
+          <div class="callout-box ${isOlehEligible ? "callout-good" : "callout-warn"}">
+            <strong>Key Watchpoint:</strong> ${ltvNote}
+          </div>
+
+          <button id="btn-to-step2" class="btn-primary" style="width:100%; padding:13px;" type="button">
+            Match My Best Neighborhoods &rarr;
+          </button>
+        `;
+      }
+
+      function renderStep1() {
+        const prioritiesList = [
+          { id: "shuls", label: "Orthodox Shuls & Eruv" },
+          { id: "schools", label: "Anglo Schools" },
+          { id: "walkable", label: "High Walkability" },
+          { id: "rail", label: "Train / Light Rail" },
+          { id: "mamad", label: "Modern Safe Room (Mamad)" },
+          { id: "sukkah", label: "Sukkah Balcony" }
+        ];
+
+        return `
+          <div class="stage-head">
+            <div>
+              <div class="stage-eyebrow">Step 01 · Personalized AI Intake</div>
+              <h1 class="stage-title">Tell Atlas Who You Are &amp; What Matters</h1>
+              <p class="stage-sub">Skip browsing 5,000 raw Hebrew ads. Your profile calibrates community recommendations, tax brackets, and vetted team intros automatically.</p>
+            </div>
+            <span class="badge badge-blue">2-Minute Setup</span>
+          </div>
+
+          <div class="split-60-40">
+            <div class="card">
+              <div class="field-block">
+                <div class="field-label">
+                  <span>1. Primary Journey</span>
+                  <span class="field-hint">Renting is treated neutrally</span>
+                </div>
+                <div class="option-grid">
+                  <button class="choice-card ${state.goal === "buy_aliyah" ? "selected" : ""}" data-goal="buy_aliyah" type="button">
+                    <strong>Making Aliyah</strong>
+                    <span>Long-term home &amp; Oleh tax check</span>
+                  </button>
+                  <button class="choice-card ${state.goal === "rent_first" ? "selected" : ""}" data-goal="rent_first" type="button">
+                    <strong>Rent Year-1 First</strong>
+                    <span>Test community &amp; protect budget</span>
+                  </button>
+                  <button class="choice-card ${state.goal === "invest_remote" ? "selected" : ""}" data-goal="invest_remote" type="button">
+                    <strong>Remote Investment</strong>
+                    <span>Overseas buyer · Legal &amp; yield focus</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="field-block">
+                <div class="field-label">
+                  <span>2. Buyer Tax &amp; Mortgage Profile</span>
+                </div>
+                <div class="option-grid">
+                  <button class="choice-card ${state.statusType === "oleh" ? "selected" : ""}" data-status="oleh" type="button">
+                    <strong>Oleh / Aliyah</strong>
+                    <span>7-yr tax window · 75% LTV</span>
+                  </button>
+                  <button class="choice-card ${state.statusType === "foreign" ? "selected" : ""}" data-status="foreign" type="button">
+                    <strong>Foreign Resident</strong>
+                    <span>8% tax rate · 50% LTV cap</span>
+                  </button>
+                  <button class="choice-card ${state.statusType === "citizen" ? "selected" : ""}" data-status="citizen" type="button">
+                    <strong>Israeli Citizen</strong>
+                    <span>First-home relief · 75% LTV</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="field-block">
+                <div class="field-label">
+                  <span>3. Target Home Budget (Purchase Reference)</span>
+                  <span id="budget-readout" class="num" style="font-size:16px; font-weight:850; color:var(--primary);">${fmtNis(state.budgetNis)} <span style="color:var(--muted-foreground); font-weight:600;">(${fmtUsd(state.budgetNis)})</span></span>
+                </div>
+                <input id="budget-slider" type="range" min="2200000" max="6000000" step="100000" value="${state.budgetNis}" />
+                <div style="display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted-foreground); margin-top:4px;">
+                  <span>₪2.2M (~$600K)</span>
+                  <span id="rent-tier-readout">Equivalent Rental Tier: ~₪${Math.round(state.budgetNis / 380).toLocaleString()}/mo</span>
+                  <span>₪6.0M (~$1.64M)</span>
+                </div>
+              </div>
+
+              <div class="field-block">
+                <div class="field-label">
+                  <span>4. Lifestyle Priorities</span>
+                  <span class="field-hint">Shapes neighborhood ranking</span>
+                </div>
+                <div class="chip-group">
+                  ${prioritiesList.map(p => `
+                    <button class="chip-btn ${state.priorities.includes(p.id) ? "selected" : ""}" data-priority="${p.id}" type="button">${p.label}</button>
+                  `).join("")}
+                </div>
+              </div>
+
+              <div class="field-block">
+                <div class="field-label">
+                  <span>5. Notes for Your AI Guide (Optional)</span>
+                </div>
+                <input id="prompt-input" class="text-input" type="text" value="${escapeHtml(state.promptText)}" placeholder="e.g., Need quiet street near train, beach access, or budget 4BR..." />
+              </div>
+            </div>
+
+            <!-- Live AI Brief Preview -->
+            <div id="step1-brief-slot" class="card" style="position:sticky; top:135px; display:flex; flex-direction:column; gap:16px;">
+              ${renderStep1BriefHtml()}
+            </div>
+          </div>
+        `;
+      }
+
+      /* ---------------- STEP 2: AI NEIGHBORHOOD MATCH ---------------- */
+      function renderStep2() {
+        const ranked = getRankedAreas();
+        const top3 = ranked.slice(0, 3);
+        const others = ranked.slice(3);
+        const selected = getSelectedArea();
+
+        return `
+          <div class="stage-head">
+            <div>
+              <div class="stage-eyebrow">Step 02 · Community Fit Before Listings</div>
+              <h1 class="stage-title">Top Israeli Neighborhood Matches For Your Profile</h1>
+              <p class="stage-sub">Ranked by community makeup, synagogues, schools, traffic, safety, and pricing around your ${fmtNis(state.budgetNis)} target.</p>
+            </div>
+            <button class="btn-secondary" data-go-step="0" type="button">&larr; Edit Profile</button>
+          </div>
+
+          <div class="grid-3">
+            ${top3.map(area => {
+              const isSel = area.id === selected.id;
+              return `
+                <article class="area-card ${isSel ? "selected" : ""}" data-select-area="${area.id}">
+                  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                    <div>
+                      <div style="font-size:12.5px; font-weight:750; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted-foreground);">${area.city}</div>
+                      <h2 style="font-size:20px; font-weight:850; margin-top:2px;">${area.name}</h2>
+                    </div>
+                    <span class="badge ${area.fitScore >= 90 ? "badge-green" : "badge-blue"} num">${area.fitScore}% Fit</span>
+                  </div>
+
+                  <p style="font-size:14px; color:var(--muted-foreground); line-height:1.4;">${area.tagline}</p>
+
+                  <div style="margin-top:auto;">
+                    <div class="metric-row">
+                      <span>Community</span>
+                      <span>${area.angloShare}</span>
+                    </div>
+                    <div class="metric-row">
+                      <span>Shuls &amp; Schools</span>
+                      <span>${area.shulsSchools}</span>
+                    </div>
+                    <div class="metric-row">
+                      <span>Commute</span>
+                      <span>${area.commuteTraffic}</span>
+                    </div>
+                    <div class="metric-row">
+                      <span>Typical 4-Rm (3BR)</span>
+                      <span class="num">${fmtNis(area.buyPriceNis)} &middot; ${fmtNis(area.rentMonthNis)}/mo</span>
+                    </div>
+                  </div>
+                </article>
+              `;
+            }).join("")}
+          </div>
+
+          <!-- Other quick switchers + Local Nuance Detail Card -->
+          <div class="card" style="margin-top:20px; display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div>
+                <span class="badge badge-amber">Neighborhood Due Diligence</span>
+                <h3 style="font-size:19px; font-weight:850; margin-top:6px;">What Newcomers Usually Miss in ${selected.name} (${selected.city})</h3>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <span style="font-size:13px; color:var(--muted-foreground); font-weight:600;">Also explore:</span>
+                ${others.map(o => `
+                  <button class="chip-btn ${selected.id === o.id ? "selected" : ""}" data-select-area="${o.id}" type="button">${o.name} (${o.fitScore}%)</button>
+                `).join("")}
+              </div>
+            </div>
+
+            <div class="split-50-50">
+              <div class="sub-card">
+                <strong style="font-size:14px; display:block; margin-bottom:5px;">On-the-Ground Street &amp; Building Reality</strong>
+                <p style="font-size:14px; color:var(--muted-foreground);">${selected.nuance}</p>
+              </div>
+              <div class="sub-card">
+                <strong style="font-size:14px; display:block; margin-bottom:5px;">Safety, Walkability &amp; Recurring Costs</strong>
+                <p style="font-size:14px; color:var(--muted-foreground);">
+                  ${selected.safetyWalk}. Typical bimonthly Arnona tax averages ~₪${(selected.arnonaMonthNis * 2).toLocaleString()} (~₪${selected.arnonaMonthNis}/mo) with ~${selected.yieldPct}% gross rental yield.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="stage-footer-nav">
+            <button class="btn-secondary" data-go-step="0" type="button">&larr; Back to Profile</button>
+            <button class="btn-primary" data-go-step="2" type="button">Compare Rent vs. Buy in ${selected.name} &rarr;</button>
+          </div>
+        `;
+      }
+
+      /* ---------------- STEP 3: NEUTRAL RENT VS. BUY PLANNER ---------------- */
+      function renderStep3ResultsHtml(area, calc) {
+        const maxBar = Math.max(calc.netRentOutflow, Math.max(100000, calc.netBuyPosition), 1);
+        const rentBarW = Math.min(100, Math.round((calc.netRentOutflow / maxBar) * 100));
+        const buyBarW = Math.max(12, Math.min(100, Math.round((Math.max(0, calc.netBuyPosition) / maxBar) * 100)));
+
+        const verdictClass = calc.verdict === "rent" ? "callout-warn" : calc.verdict === "buy" ? "callout-good" : "";
+        const verdictBadge = calc.verdict === "rent" ? `<span class="badge badge-amber">Renting Wins Near-Term</span>`
+          : calc.verdict === "buy" ? `<span class="badge badge-green">Buying Wins ${calc.years}+ Yr Horizon</span>`
+          : `<span class="badge badge-blue">Balanced Financial Case</span>`;
+
+        return `
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px;">
+              <span style="font-size:13px; font-weight:800; text-transform:uppercase; color:var(--muted-foreground);">Model Output</span>
+              ${verdictBadge}
+            </div>
+            <h2 style="font-size:21px; font-weight:850;">${calc.verdictTitle}</h2>
+            <p class="callout-box ${verdictClass}" style="margin-top:12px;">${calc.verdictReason}</p>
+
+            <div style="margin-top:16px; display:flex; flex-direction:column; gap:12px;">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-size:13.5px;">
+                  <span>Rent Path (${calc.years} yrs lease + tenant repairs)</span>
+                  <strong class="num" style="white-space:nowrap; flex-shrink:0;">${fmtNis(calc.netRentOutflow)} net cost</strong>
+                </div>
+                <div class="bar-track"><div class="bar-fill" style="width:${rentBarW}%; background:var(--accent);"></div></div>
+              </div>
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-size:13.5px;">
+                  <span>Buy Path (${calc.years} yrs net of ${fmtNis(calc.appreciation)} est. growth)</span>
+                  <strong class="num" style="white-space:nowrap; flex-shrink:0;">${calc.netBuyPosition <= 0 ? "Net +" + fmtNis(Math.abs(calc.netBuyPosition)) + " gain" : fmtNis(calc.netBuyPosition) + " net cost"}</strong>
+                </div>
+                <div class="bar-track"><div class="bar-fill" style="width:${buyBarW}%; background:var(--primary);"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Side-by-Side Real Costs -->
+          <div class="grid-2">
+            <div class="card" style="padding:18px;">
+              <span class="badge badge-blue">Buying Reality</span>
+              <div style="font-size:19px; font-weight:850; margin-top:8px;" class="num">${fmtNis(calc.monthlyMortgage)}<span style="font-size:13px; color:var(--muted-foreground); font-weight:600;">/mo loan</span></div>
+              <div style="margin-top:10px;">
+                <div class="metric-row"><span>Mas Rechisha Tax</span><span class="num">${fmtNis(calc.tax)}</span></div>
+                <div class="metric-row"><span>Legal Fees (~0.6%)</span><span class="num">${fmtNis(calc.legalClosing)}</span></div>
+                <div class="metric-row"><span>FX Drag / Fee</span><span class="num">${fmtNis(calc.fxFee)}</span></div>
+                <div class="metric-row"><span>Min Equity (${100 - calc.maxLtv * 100}%)</span><span class="num">${fmtNis(calc.minCashRequired)}</span></div>
+              </div>
+            </div>
+
+            <div class="card" style="padding:18px;">
+              <span class="badge badge-muted">Renting Reality</span>
+              <div style="font-size:19px; font-weight:850; margin-top:8px;" class="num">${fmtNis(calc.rentMonth)}<span style="font-size:13px; color:var(--muted-foreground); font-weight:600;">/mo rent</span></div>
+              <div style="margin-top:10px;">
+                <div class="metric-row"><span>Bank Guarantee Lock</span><span class="num">${fmtNis(calc.rentMonth * 3)}</span></div>
+                <div class="metric-row"><span>Tenant Upkeep</span><span>AC, boiler &amp; plumbing</span></div>
+                <div class="metric-row"><span>Oleh Clock Preserved</span><span>Full 7-yr tax window</span></div>
+                <div class="metric-row"><span>1-Yr Buy Drift Risk</span><span class="num">~+${fmtNis(Math.round(area.buyPriceNis * 0.045))} @ 4.5%</span></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderStep3() {
+        const area = getSelectedArea();
+        const calc = calcFinancialComparison(area);
+
+        return `
+          <div class="stage-head">
+            <div>
+              <div class="stage-eyebrow">Step 03 · Honest Financial &amp; Tax Modeling</div>
+              <h1 class="stage-title">Rent vs. Buy Reality Check — ${area.name}</h1>
+              <p class="stage-sub">No pressure either way: models true Israeli closing taxes, LTV equity limits, bank FX spreads, and hidden tenant repair obligations side-by-side.</p>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <select id="calc-area-select" class="preset-select" aria-label="Switch area tested">
+                ${AREAS.map(a => `<option value="${a.id}" ${a.id === area.id ? "selected" : ""}>${a.name} (${a.city} · ${fmtNis(a.buyPriceNis)})</option>`).join("")}
+              </select>
+            </div>
+          </div>
+
+          <div class="split-50-50">
+            <!-- Left Controls -->
+            <div class="card">
+              <div class="field-block">
+                <div class="field-label">
+                  <span>Expected Stay Horizon</span>
+                  <span id="horizon-readout" class="num" style="color:var(--primary); font-weight:850;">${state.horizonYears} ${state.horizonYears === 1 ? "Year" : "Years"}</span>
+                </div>
+                <input id="horizon-slider" type="range" min="1" max="10" step="1" value="${state.horizonYears}" />
+                <div style="display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted-foreground); margin-top:4px;">
+                  <span>1 yr (Year-1 Trial)</span>
+                  <span>5 yrs</span>
+                  <span>10 yrs</span>
+                </div>
+              </div>
+
+              <div class="field-block">
+                <div class="field-label">
+                  <span>Available Cash / Equity</span>
+                  <span id="down-readout" class="num" style="color:var(--primary); font-weight:850;">${fmtNis(state.downPaymentNis)} <span style="color:var(--muted-foreground); font-weight:600;">(${fmtUsd(state.downPaymentNis)})</span></span>
+                </div>
+                <input id="down-slider" type="range" min="600000" max="4000000" step="100000" value="${state.downPaymentNis}" />
+                <div style="display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted-foreground); margin-top:4px;">
+                  <span id="down-req-readout">Required min @ ${(calc.maxLtv * 100)}%: ${fmtNis(calc.totalCashNeeded)}</span>
+                  <span id="down-shortfall-readout">${calc.cashShortfall > 0 ? "Short " + fmtNis(calc.cashShortfall) : "Equity Eligible ✓"}</span>
+                </div>
+              </div>
+
+              <div class="field-block">
+                <div class="field-label">
+                  <span>Buyer Tax Status</span>
+                </div>
+                <div class="option-grid">
+                  <button class="choice-card ${state.statusType === "oleh" ? "selected" : ""}" data-status="oleh" type="button">
+                    <strong>Oleh Discount</strong>
+                    <span>Tax: ${fmtNis(calc.olehTax)}</span>
+                  </button>
+                  <button class="choice-card ${state.statusType === "foreign" ? "selected" : ""}" data-status="foreign" type="button">
+                    <strong>Foreign Buyer</strong>
+                    <span>8% Tax: ${fmtNis(calc.olehTax + calc.taxSavingsVsForeign)}</span>
+                  </button>
+                  <button class="choice-card ${state.statusType === "citizen" ? "selected" : ""}" data-status="citizen" type="button">
+                    <strong>Citizen Single</strong>
+                    <span>0% first ₪1.98M</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="field-block">
+                <div class="field-label">
+                  <span>Home Appreciation Assumption</span>
+                </div>
+                <div class="chip-group">
+                  <button class="chip-btn ${state.growthMode === "flat" ? "selected" : ""}" data-growth="flat" type="button">Flat (0%/yr)</button>
+                  <button class="chip-btn ${state.growthMode === "conservative" ? "selected" : ""}" data-growth="conservative" type="button">Conservative (+2%/yr)</button>
+                  <button class="chip-btn ${state.growthMode === "moderate" ? "selected" : ""}" data-growth="moderate" type="button">Historical (+4.5%/yr)</button>
+                </div>
+              </div>
+
+              <div class="field-block" style="padding-top:14px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                <div>
+                  <strong style="font-size:14px;">Cross-Border FX Desk vs. Retail Bank</strong>
+                  <div style="font-size:12.5px; color:var(--muted-foreground);">Avoids 1.5%–2% retail currency conversion spreads</div>
+                </div>
+                <button id="toggle-fx" class="chip-btn ${state.useFxPartner ? "selected" : ""}" type="button">
+                  ${state.useFxPartner ? "FX Desk Saves " + fmtNis(calc.fxSavings) : "Using Retail Bank"}
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Unbiased Analysis -->
+            <div id="step3-results-slot" style="display:flex; flex-direction:column; gap:16px;">
+              ${renderStep3ResultsHtml(area, calc)}
+            </div>
+          </div>
+
+          <div class="stage-footer-nav">
+            <button class="btn-secondary" data-go-step="1" type="button">&larr; Back to Area Match</button>
+            <button class="btn-primary" data-go-step="3" type="button">Inspect Homes &amp; Check Permits in ${area.name} &rarr;</button>
+          </div>
+        `;
+      }
+
+      /* ---------------- STEP 4: HOME DECODER & PROPERTY GUARD ---------------- */
+      function renderStep4() {
+        const area = getSelectedArea();
+        const listings = area.listings || [];
+        const selected = getSelectedListing(area);
+
+        const statusMap = {
+          pass: { cls: "badge-green", boxCls: "callout-good", title: "Deed & Permit Check Passed" },
+          warn: { cls: "badge-amber", boxCls: "callout-warn", title: "Contract / Bylaws Check Needed" },
+          danger: { cls: "badge-red", boxCls: "callout-danger", title: "Unpermitted Space Alert — Pre-Offer Shamai Required" }
+        }[selected.guardStatus];
+
+        const sqmDelta = selected.listedSqm - selected.deedSqm;
+
+        return `
+          <div class="stage-head">
+            <div>
+              <div class="stage-eyebrow">Step 04 · Partner Listings + Permit Guard</div>
+              <h1 class="stage-title">Decode Listings &amp; Catch Hidden Trap Extensions</h1>
+              <p class="stage-sub">Shows partner-supplied inventory for ${area.name}—translating Israeli room terms while comparing advertised m&sup2; against Tabu &amp; Arnona records.</p>
+            </div>
+            <span class="badge badge-amber">Undocumented Area Audit</span>
+          </div>
+
+          <div class="split-50-50">
+            <!-- Left Property Selector -->
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong style="font-size:14px; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted-foreground);">Partner Listings in ${area.name} (${listings.length})</strong>
+                <select id="guard-area-select" class="preset-select" style="padding:5px 28px 5px 10px; font-size:12.5px;" aria-label="Switch property city">
+                  ${AREAS.map(a => `<option value="${a.id}" ${a.id === area.id ? "selected" : ""}>${a.name} (${a.city})</option>`).join("")}
+                </select>
+              </div>
+
+              ${listings.map(item => {
+                const st = item.guardStatus === "pass" ? "badge-green" : item.guardStatus === "danger" ? "badge-red" : "badge-amber";
+                return `
+                  <div class="prop-item ${item.id === selected.id ? "selected" : ""}" data-select-listing="${item.id}">
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                      <span class="badge badge-muted">${item.source}</span>
+                      <span class="badge ${st}">${item.guardLabel}</span>
+                    </div>
+                    <div style="font-size:16.5px; font-weight:800; line-height:1.3;">${item.title}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:14px;">
+                      <span class="num" style="font-weight:850; color:var(--primary);">${fmtNis(item.priceNis)} <span style="color:var(--muted-foreground); font-weight:600;">(${fmtUsd(item.priceNis)})</span></span>
+                      <span class="num" style="color:var(--muted-foreground);">Deed ${item.deedSqm} m&sup2; vs Ad ${item.listedSqm} m&sup2;</span>
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+
+              <!-- Mandatory Legal Rule Banner -->
+              <div class="callout-box callout-danger" style="margin-top:4px;">
+                <strong>Zero Zichron Devarim Rule:</strong> Unlike U.S. non-binding offers, a short memo of understanding in Israel is legally binding. Atlas locks signing until your buyer's counsel reviews title &amp; contingencies.
+              </div>
+            </div>
+
+            <!-- Right Plain-English Decoder + Audit Panel -->
+            <div class="card" style="display:flex; flex-direction:column; gap:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+                <div>
+                  <span style="font-size:12.5px; font-weight:800; color:var(--primary); text-transform:uppercase; letter-spacing:0.06em;">Property Decoder</span>
+                  <h2 style="font-size:19px; font-weight:850; margin-top:2px;">${selected.title}</h2>
+                </div>
+                <span class="badge ${statusMap.cls}">${selected.guardLabel}</span>
+              </div>
+
+              <!-- 4 Essential Anglo Spec Rows -->
+              <div class="grid-2">
+                <div class="sub-card">
+                  <div style="font-size:12.5px; font-weight:750; color:var(--muted-foreground);">ISRAELI ROOM COUNT</div>
+                  <div style="font-size:14.5px; font-weight:750; margin-top:3px;">${selected.roomsLabel}</div>
+                </div>
+                <div class="sub-card">
+                  <div style="font-size:12.5px; font-weight:750; color:var(--muted-foreground);">TABU vs. ADVERTISED m&sup2;</div>
+                  <div class="num" style="font-size:14.5px; font-weight:750; margin-top:3px; color:${sqmDelta > 15 ? "var(--error)" : "var(--foreground)"};">
+                    ${selected.deedSqm} m&sup2; deed vs. ${selected.listedSqm} m&sup2; ad (${sqmDelta > 0 ? "+" + sqmDelta + " m² gap" : "match"})
+                  </div>
+                </div>
+                <div class="sub-card">
+                  <div style="font-size:12.5px; font-weight:750; color:var(--muted-foreground);">SAFE ROOM STATUS</div>
+                  <div style="font-size:14.5px; font-weight:750; margin-top:3px;">${selected.mamad}</div>
+                </div>
+                <div class="sub-card">
+                  <div style="font-size:12.5px; font-weight:750; color:var(--muted-foreground);">BALCONY &amp; FLOOR</div>
+                  <div style="font-size:14.5px; font-weight:750; margin-top:3px;">${selected.sukkah} &middot; ${selected.floor}</div>
+                </div>
+              </div>
+
+              <div class="callout-box ${statusMap.boxCls}">
+                <strong style="display:block; margin-bottom:3px;">${statusMap.title}</strong>
+                ${selected.guardDetail}
+              </div>
+
+              <!-- Concise Interactive AI Q&A Helper -->
+              <div class="sub-card">
+                <div style="font-size:12.5px; font-weight:800; color:var(--muted-foreground); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Ask Atlas AI About This Property</div>
+                <div class="chip-group" style="margin-bottom:10px;">
+                  <button class="chip-btn ${state.activeQaKey === "rooms" ? "selected" : ""}" data-qa="rooms" type="button">What do rooms mean?</button>
+                  <button class="chip-btn ${state.activeQaKey === "permit" ? "selected" : ""}" data-qa="permit" type="button">Is space legal &amp; lendable?</button>
+                  <button class="chip-btn ${state.activeQaKey === "offer" ? "selected" : ""}" data-qa="offer" type="button">What before making an offer?</button>
+                </div>
+                <p style="font-size:14px; color:var(--foreground); line-height:1.45;">
+                  ${selected.qa[state.activeQaKey]}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="stage-footer-nav">
+            <button class="btn-secondary" data-go-step="2" type="button">&larr; Back to Rent vs. Buy</button>
+            <button class="btn-primary" data-go-step="4" type="button">Connect With Matched Local Deal Team &rarr;</button>
+          </div>
+        `;
+      }
+
+      /* ---------------- STEP 5: MATCHED TEAM & DEAL ROOM ---------------- */
+      function renderStep5() {
+        const area = getSelectedArea();
+        const listing = getSelectedListing(area);
+        const calc = calcFinancialComparison(area);
+        const doneCount = Object.values(state.checklist).filter(Boolean).length;
+
+        const checklistItems = [
+          {
+            id: "c1",
+            title: "1. Neighborhood Shortlist & Profile Confirmed",
+            sub: area.name + ", " + area.city + " selected (" + area.fitScore + "% community & commute match)."
+          },
+          {
+            id: "c2",
+            title: "2. Independent Real Estate Lawyer Retained",
+            sub: "Mandatory before signing any offer/memo. Pulls Nesach Tabu & secures Mas Rechisha timing."
+          },
+          {
+            id: "c3",
+            title: "3. Pre-Offer Shamai (Appraiser) Dispatched",
+            sub: listing.guardStatus === "danger"
+              ? "URGENT for this home: verifies actual permitted square meters for your bank loan."
+              : "Confirms deed alignment and market value prior to binding signature."
+          },
+          {
+            id: "c4",
+            title: "4. Cross-Border Source-of-Funds AML & FX Pre-Cleared",
+            sub: "Prevents Israeli bank wire freezes; locks ~" + fmtNis(calc.fxSavings) + " savings vs retail FX."
+          },
+          {
+            id: "c5",
+            title: "5. Bank Pre-Approval & Insurance Structure Finalized",
+            sub: "Covers " + (calc.maxLtv * 100) + "% LTV tracks + life/structure closing cover."
+          }
+        ];
+
+        return `
+          <div class="stage-head">
+            <div>
+              <div class="stage-eyebrow">Step 05 · Accountable Partner Workspace</div>
+              <h1 class="stage-title">Your Independent Local Team &amp; Closing Track</h1>
+              <p class="stage-sub">No scattered WhatsApp guessing. Buyer's counsel leads the transaction while specialized pros execute cleanly with full fee transparency.</p>
+            </div>
+            <button id="btn-open-brief" class="btn-primary" type="button">Generate Client Deal Brief</button>
+          </div>
+
+          <div class="split-60-40">
+            <!-- Left: Matched Independent Specialists -->
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted-foreground);">
+                Matched Specialists for ${area.city} &middot; Independent Partners
+              </div>
+
+              ${SPECIALISTS.map(pro => {
+                const picked = !!state.selectedPros[pro.id];
+                return `
+                  <div class="card" style="padding:18px 20px; border-color:${picked ? "var(--primary)" : "var(--card-border)"};">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+                      <div>
+                        <span class="badge ${pro.tagClass}">${pro.tag}</span>
+                        <h3 style="font-size:17px; font-weight:850; margin-top:6px;">${pro.role} &mdash; ${pro.partnerName}</h3>
+                        <div style="font-size:13px; color:var(--muted-foreground); margin-top:2px;">${pro.lang} &middot; <strong>${pro.fee}</strong></div>
+                      </div>
+                      <button class="chip-btn ${picked ? "selected" : ""}" data-toggle-pro="${pro.id}" type="button">
+                        ${picked ? "In My Team ✓" : "Add to Team"}
+                      </button>
+                    </div>
+                    <p style="font-size:13.5px; color:var(--foreground); margin-top:10px;">${pro.why}</p>
+                    <div style="font-size:12.5px; color:var(--muted-foreground); margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">
+                      ${pro.compliance}
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+
+            <!-- Right: Deal Room Progress & Compliance Guard -->
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                  <div>
+                    <span style="font-size:12.5px; font-weight:800; color:var(--primary); text-transform:uppercase; letter-spacing:0.06em;">Closing Deal Room</span>
+                    <h2 style="font-size:19px; font-weight:850;">Pre-Closing Guard Checklist</h2>
+                  </div>
+                  <span class="badge badge-green num">${doneCount} / 5 Ready</span>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                  ${checklistItems.map(item => {
+                    const done = !!state.checklist[item.id];
+                    return `
+                      <div class="check-row ${done ? "done" : ""}" data-toggle-check="${item.id}">
+                        <div class="check-box">${done ? "✓" : ""}</div>
+                        <div>
+                          <div style="font-size:14px; font-weight:750;">${item.title}</div>
+                          <div style="font-size:13px; color:var(--muted-foreground); margin-top:2px;">${item.sub}</div>
+                        </div>
+                      </div>
+                    `;
+                  }).join("")}
+                </div>
+              </div>
+
+              <div class="card" style="padding:18px 20px;">
+                <div style="font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted-foreground); margin-bottom:10px;">How Atlas Earns (Zero Client Surcharge)</div>
+                <div class="metric-row" style="border-top:none; padding-top:0;">
+                  <span>Your Lawyer &amp; Counsel</span>
+                  <span class="badge badge-green">₪0 Atlas Referral Fee</span>
+                </div>
+                <div class="metric-row">
+                  <span>Co-Brokerage / Builder Pre-Sale</span>
+                  <span>Written Partner Split Only</span>
+                </div>
+                <div class="metric-row">
+                  <span>FX, Mortgage &amp; Insurance</span>
+                  <span>Partner Attach (~${fmtNis(calc.fxSavings)} Saved)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stage-footer-nav">
+            <button class="btn-secondary" data-go-step="3" type="button">&larr; Back to Home Guard</button>
+            <button id="btn-open-brief-bottom" class="btn-primary" type="button">Preview &amp; Export Complete Client Brief &rarr;</button>
+          </div>
+        `;
+      }
+
+      /* ---------------- Brief Summary Modal Builder ---------------- */
+      function buildBriefHtml() {
+        const area = getSelectedArea();
+        const listing = getSelectedListing(area);
+        const calc = calcFinancialComparison(area);
+        const pros = SPECIALISTS.filter(p => state.selectedPros[p.id]);
+        return `
+          <div class="sub-card">
+            <strong>Target Path &amp; Profile</strong>
+            <div style="color:var(--muted-foreground); margin-top:4px;">
+              Goal: <strong>${state.goal === "rent_first" ? "Rent Year-1 First" : state.goal === "invest_remote" ? "Remote Investment" : "Aliyah Relocation"}</strong> &middot;
+              Tax Track: <strong>${state.statusType.toUpperCase()}</strong> (${calc.maxLtv * 100}% max LTV) &middot;
+              Budget: <strong>${fmtNis(state.budgetNis)} (${fmtUsd(state.budgetNis)})</strong>
+            </div>
+          </div>
+          <div class="sub-card">
+            <strong>Matched Hub: ${area.name}, ${area.city} (${area.fitScore}% Fit)</strong>
+            <div style="color:var(--muted-foreground); margin-top:4px;">${area.shulsSchools}. ${area.commuteTraffic}.</div>
+          </div>
+          <div class="sub-card">
+            <strong>Rent vs. Buy Ruling (${calc.years}-Yr Stay): ${calc.verdictTitle}</strong>
+            <div style="color:var(--muted-foreground); margin-top:4px;">
+              Estimated Closing Tax: <strong>${fmtNis(calc.tax)}</strong> &middot;
+              FX Desk Potential Savings: <strong>${fmtNis(calc.fxSavings)}</strong> &middot;
+              Monthly Lease Ref: <strong>${fmtNis(calc.rentMonth)}</strong> vs Loan Ref: <strong>${fmtNis(calc.monthlyMortgage)}</strong>.
+            </div>
+          </div>
+          <div class="sub-card">
+            <strong>Property Audit Snapshot: ${listing.title}</strong>
+            <div style="color:var(--muted-foreground); margin-top:4px;">
+              Status: <strong>${listing.guardLabel}</strong> &mdash; ${listing.guardDetail}
+            </div>
+          </div>
+          <div class="sub-card">
+            <strong>Selected Independent Deal Team (${pros.length})</strong>
+            <div style="color:var(--muted-foreground); margin-top:4px;">
+              ${pros.map(p => p.partnerName + " (" + p.role.replace(/^\d+\.\s*/, "") + ")").join(" · ")}
+            </div>
+          </div>
+        `;
+      }
+
+      /* ---------------- Event Binding ---------------- */
+      function bindStep1BriefButton() {
+        const toStep2 = document.getElementById("btn-to-step2");
+        if (toStep2) toStep2.addEventListener("click", () => { state.step = 1; render(true); });
+      }
+
+      function refreshStep1Live() {
+        const area = getSelectedArea();
+        state.selectedAreaId = area.id;
+        state.selectedListingId = area.listings[0].id;
+        const budgetEl = document.getElementById("budget-readout");
+        if (budgetEl) budgetEl.innerHTML = `${fmtNis(state.budgetNis)} <span style="color:var(--muted-foreground); font-weight:600;">(${fmtUsd(state.budgetNis)})</span>`;
+        const rentTierEl = document.getElementById("rent-tier-readout");
+        if (rentTierEl) rentTierEl.textContent = `Equivalent Rental Tier: ~₪${Math.round(state.budgetNis / 380).toLocaleString()}/mo`;
+        const briefEl = document.getElementById("step1-brief-slot");
+        if (briefEl) {
+          briefEl.innerHTML = renderStep1BriefHtml();
+          bindStep1BriefButton();
+        }
+      }
+
+      function refreshStep3Live() {
+        const area = getSelectedArea();
+        const calc = calcFinancialComparison(area);
+        const hEl = document.getElementById("horizon-readout");
+        if (hEl) hEl.textContent = `${state.horizonYears} ${state.horizonYears === 1 ? "Year" : "Years"}`;
+        const dEl = document.getElementById("down-readout");
+        if (dEl) dEl.innerHTML = `${fmtNis(state.downPaymentNis)} <span style="color:var(--muted-foreground); font-weight:600;">(${fmtUsd(state.downPaymentNis)})</span>`;
+        const reqEl = document.getElementById("down-req-readout");
+        if (reqEl) reqEl.textContent = `Required min @ ${calc.maxLtv * 100}%: ${fmtNis(calc.totalCashNeeded)}`;
+        const sfEl = document.getElementById("down-shortfall-readout");
+        if (sfEl) sfEl.textContent = calc.cashShortfall > 0 ? "Short " + fmtNis(calc.cashShortfall) : "Equity Eligible ✓";
+        const fxBtn = document.getElementById("toggle-fx");
+        if (fxBtn) fxBtn.textContent = state.useFxPartner ? `FX Desk Saves ${fmtNis(calc.fxSavings)}` : "Using Retail Bank";
+        const slot = document.getElementById("step3-results-slot");
+        if (slot) slot.innerHTML = renderStep3ResultsHtml(area, calc);
+      }
+
+      function bindStageEvents() {
+        document.querySelectorAll("[data-go-step]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            state.step = Number(btn.dataset.goStep);
+            render(true);
+          });
+        });
+
+        bindStep1BriefButton();
+
+        document.querySelectorAll("[data-goal]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            state.goal = btn.dataset.goal;
+            if (state.goal === "rent_first") state.horizonYears = 2;
+            else if (state.horizonYears < 4) state.horizonYears = 5;
+            if (state.goal === "invest_remote") state.statusType = "foreign";
+            const ranked = getRankedAreas();
+            state.selectedAreaId = ranked[0].id;
+            state.selectedListingId = ranked[0].listings[0].id;
+            render(false);
+          });
+        });
+
+        document.querySelectorAll("[data-status]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            state.statusType = btn.dataset.status;
+            render(false);
+          });
+        });
+
+        document.querySelectorAll("[data-priority]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const p = btn.dataset.priority;
+            if (state.priorities.includes(p)) {
+              state.priorities = state.priorities.filter(x => x !== p);
+            } else {
+              state.priorities.push(p);
+            }
+            const ranked = getRankedAreas();
+            state.selectedAreaId = ranked[0].id;
+            state.selectedListingId = ranked[0].listings[0].id;
+            render(false);
+          });
+        });
+
+        const budgetSlider = document.getElementById("budget-slider");
+        if (budgetSlider) {
+          budgetSlider.addEventListener("input", e => {
+            state.budgetNis = Number(e.target.value);
+            const ranked = getRankedAreas();
+            state.selectedAreaId = ranked[0].id;
+            refreshStep1Live();
+          });
+        }
+
+        const promptInput = document.getElementById("prompt-input");
+        if (promptInput) {
+          promptInput.addEventListener("input", e => {
+            state.promptText = e.target.value;
+            const ranked = getRankedAreas();
+            state.selectedAreaId = ranked[0].id;
+            refreshStep1Live();
+          });
+        }
+
+        document.querySelectorAll("[data-select-area]").forEach(card => {
+          card.addEventListener("click", () => {
+            state.selectedAreaId = card.dataset.selectArea;
+            const area = getSelectedArea();
+            state.selectedListingId = area.listings[0].id;
+            render(false);
+          });
+        });
+
+        const calcAreaSel = document.getElementById("calc-area-select");
+        if (calcAreaSel) {
+          calcAreaSel.addEventListener("change", e => {
+            state.selectedAreaId = e.target.value;
+            state.selectedListingId = getSelectedArea().listings[0].id;
+            render(false);
+          });
+        }
+
+        const guardAreaSel = document.getElementById("guard-area-select");
+        if (guardAreaSel) {
+          guardAreaSel.addEventListener("change", e => {
+            state.selectedAreaId = e.target.value;
+            state.selectedListingId = getSelectedArea().listings[0].id;
+            render(false);
+          });
+        }
+
+        const horizonSlider = document.getElementById("horizon-slider");
+        if (horizonSlider) {
+          horizonSlider.addEventListener("input", e => {
+            state.horizonYears = Number(e.target.value);
+            refreshStep3Live();
+          });
+        }
+
+        const downSlider = document.getElementById("down-slider");
+        if (downSlider) {
+          downSlider.addEventListener("input", e => {
+            state.downPaymentNis = Number(e.target.value);
+            refreshStep3Live();
+          });
+        }
+
+        document.querySelectorAll("[data-growth]").forEach(btn => {
+          btn.addEventListener("click", () => { state.growthMode = btn.dataset.growth; render(false); });
+        });
+
+        const fxBtn = document.getElementById("toggle-fx");
+        if (fxBtn) fxBtn.addEventListener("click", () => { state.useFxPartner = !state.useFxPartner; render(false); });
+
+        document.querySelectorAll("[data-select-listing]").forEach(el => {
+          el.addEventListener("click", () => { state.selectedListingId = el.dataset.selectListing; render(false); });
+        });
+
+        document.querySelectorAll("[data-qa]").forEach(el => {
+          el.addEventListener("click", () => { state.activeQaKey = el.dataset.qa; render(false); });
+        });
+
+        document.querySelectorAll("[data-toggle-pro]").forEach(el => {
+          el.addEventListener("click", () => {
+            const k = el.dataset.togglePro;
+            state.selectedPros[k] = !state.selectedPros[k];
+            render(false);
+          });
+        });
+
+        document.querySelectorAll("[data-toggle-check]").forEach(el => {
+          el.addEventListener("click", () => {
+            const k = el.dataset.toggleCheck;
+            state.checklist[k] = !state.checklist[k];
+            render(false);
+          });
+        });
+
+        const openBrief = () => {
+          document.getElementById("brief-content").innerHTML = buildBriefHtml();
+          document.getElementById("brief-modal").classList.add("open");
+        };
+        const btnBrief = document.getElementById("btn-open-brief");
+        const btnBriefBottom = document.getElementById("btn-open-brief-bottom");
+        if (btnBrief) btnBrief.addEventListener("click", openBrief);
+        if (btnBriefBottom) btnBriefBottom.addEventListener("click", openBrief);
+      }
+
+      /* ---------------- Global Navigation & Modals ---------------- */
+      function escapeHtml(s) {
+        return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      document.querySelectorAll("#stepper-nav .step-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+          state.step = Number(tab.dataset.step);
+          render(true);
+        });
+      });
+
+      document.getElementById("brand-reset").addEventListener("click", e => {
+        e.preventDefault();
+        state.step = 0;
+        render(true);
+      });
+
+      document.getElementById("preset-select").addEventListener("change", e => {
+        const p = PRESETS[e.target.value];
+        if (!p) return;
+        state.preset = e.target.value;
+        Object.assign(state, JSON.parse(JSON.stringify(p)));
+        render(false);
+      });
+
+      const sourcesModal = document.getElementById("sources-modal");
+      document.getElementById("btn-sources").addEventListener("click", () => sourcesModal.classList.add("open"));
+      document.getElementById("btn-close-modal").addEventListener("click", () => sourcesModal.classList.remove("open"));
+      sourcesModal.addEventListener("click", e => { if (e.target === sourcesModal) sourcesModal.classList.remove("open"); });
+
+      const briefModal = document.getElementById("brief-modal");
+      document.getElementById("btn-close-brief").addEventListener("click", () => briefModal.classList.remove("open"));
+      briefModal.addEventListener("click", e => { if (e.target === briefModal) briefModal.classList.remove("open"); });
+
+      window.addEventListener("keydown", e => {
+        if (e.key === "Escape") {
+          sourcesModal.classList.remove("open");
+          briefModal.classList.remove("open");
+        }
+      });
+
+      document.getElementById("btn-copy-brief").addEventListener("click", () => {
+        const txt = document.getElementById("brief-content").innerText;
+        navigator.clipboard?.writeText(txt).catch(() => {});
+        const btn = document.getElementById("btn-copy-brief");
+        btn.textContent = "Copied ✓";
+        setTimeout(() => { btn.textContent = "Copy Summary"; }, 1800);
+      });
+
+      document.getElementById("btn-print-brief").addEventListener("click", () => {
+        briefModal.classList.remove("open");
+        window.print();
+      });
+
+      document.getElementById("btn-theme").addEventListener("click", () => {
+        const curDark = manualTheme ? manualTheme === "dark" : document.documentElement.style.getPropertyValue("--background") === DARK_TOKENS["--background"];
+        manualTheme = curDark ? "light" : "dark";
+        applyTheme();
+      });
+
+      window.addEventListener("themechange", () => {
+        manualTheme = null;
+        applyTheme();
+      });
+
+      applyTheme();
+      render(false);
+
+      window.__atlasLive = { state, setStep: s => { state.step = s; render(true); } };
+    })();
+  </script>
+</body>
+</html>
