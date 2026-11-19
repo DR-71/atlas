@@ -186,17 +186,54 @@
     .stage-tab.done .tab-index { color: var(--good); }
     .stage-tab.active .tab-index { color: var(--accent); }
 
+    button, a, summary, [role="button"], label.btn-primary, input[type="range"], select {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
     /* Shell */
     .shell { max-width: 1140px; margin: 0 auto; padding: 34px 24px 72px; transition: max-width 0.25s ease; }
     .shell.shell-explorer { max-width: 1380px; }
 
-    /* Stage 0: Concierge Entry */
+    /* Stage 0: Concierge Entry & Catchy Hero Tagline */
     .concierge-wrap {
-      max-width: 720px;
-      margin: 22px auto 0;
+      max-width: 740px;
+      margin: 18px auto 0;
       display: flex;
       flex-direction: column;
-      gap: 26px;
+      gap: 24px;
+    }
+
+    .hero-tagline-banner {
+      background: linear-gradient(135deg, var(--accent-soft) 0%, var(--surface) 74%);
+      border: 1px solid var(--line-strong);
+      border-left: 4px solid var(--accent);
+      border-radius: 16px;
+      padding: 22px 26px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .hero-tagline-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hero-tagline-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent);
+      color: var(--accent-ink);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .concierge-kicker {
@@ -204,7 +241,7 @@
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--accent);
+      color: var(--accent-text);
     }
 
     .concierge-title {
@@ -212,12 +249,57 @@
       font-size: 40px;
       font-weight: 400;
       letter-spacing: -0.02em;
-      line-height: 1.15;
+      line-height: 1.12;
       color: var(--ink);
-      margin-top: 8px;
+      margin-top: 12px;
     }
 
-    .concierge-sub { font-size: 16px; color: var(--muted); margin-top: 10px; max-width: 600px; }
+    .hero-tagline-accent {
+      color: var(--accent-text);
+      font-style: italic;
+    }
+
+    .concierge-sub { font-size: 16px; color: var(--muted); margin-top: 10px; max-width: 630px; line-height: 1.55; }
+
+    .concierge-prompt-title {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1.24;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+
+    /* Stage 1 Editorial Tagline Strip */
+    .stage1-tagline-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      background: linear-gradient(125deg, var(--accent-soft) 0%, var(--surface) 70%);
+      border: 1px solid var(--line-strong);
+      border-left: 4px solid var(--accent);
+      border-radius: 13px;
+      padding: 13px 18px;
+      margin-bottom: 18px;
+    }
+    .stage1-tagline-headline {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 21px;
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .stage1-tagline-sub {
+      font-size: 13.5px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Mobile Thumb Dock (Hidden on Desktop) */
+    .mobile-stage-dock { display: none; }
 
     .prompt-shell {
       background: var(--surface);
@@ -1973,25 +2055,53 @@
     }
 
     @media (max-width: 640px) {
-      html, body { font-size: 15px; line-height: 1.52; }
+      html, body { font-size: 15px; line-height: 1.52; overflow-x: clip; }
       .topbar { position: relative; }
-      .topbar-inner { padding: 10px 14px; flex-wrap: wrap; gap: 9px; }
-      .nav-actions { width: 100%; justify-content: space-between; gap: 8px; }
+      .topbar-inner { padding: 10px 14px; flex-wrap: wrap; gap: 8px; }
+      .nav-actions { width: 100%; justify-content: space-between; align-items: center; gap: 7px; }
       .select-minimal { max-width: 100%; flex: 0 0 auto; }
-      .nav-actions .select-minimal { flex: 1 1 140px; }
-      .workspace-nav-inner { padding: 0 14px; gap: 12px; }
+      .nav-actions .select-minimal { order: 4; flex: 1 1 100%; width: 100%; }
+      .nav-actions .text-link-btn, .fx-pill-btn, .account-pill { min-height: 36px; display: inline-flex; align-items: center; }
+      .workspace-nav-inner {
+        padding: 0 14px;
+        gap: 12px;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+      }
       .stage-tabs { gap: 14px; }
-      .stage-tab { font-size: 13px; padding: 11px 2px; gap: 6px; }
-      .shell { padding: 20px 14px 48px; }
-      .concierge-wrap { margin: 8px auto 0; gap: 20px; }
-      .concierge-title { font-size: 27px; line-height: 1.18; }
-      .concierge-sub { font-size: 14.5px; line-height: 1.5; }
+      .stage-tab { font-size: 13px; padding: 11px 2px; gap: 6px; scroll-snap-align: center; min-height: 44px; }
+      .shell { padding: 18px 14px 52px; }
+      .shell.shell-has-dock { padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)); }
+      .concierge-wrap { margin: 6px auto 0; gap: 18px; }
+      .hero-tagline-banner { padding: 16px 16px; border-radius: 14px; }
+      .concierge-title { font-size: 27px; line-height: 1.15; margin-top: 10px; }
+      .concierge-sub { font-size: 14.5px; line-height: 1.5; margin-top: 8px; }
+      .concierge-prompt-title { font-size: 19.5px; margin-bottom: 8px; }
+      .stage1-tagline-banner { padding: 12px 14px; border-radius: 12px; gap: 8px; margin-bottom: 14px; }
+      .stage1-tagline-headline { font-size: 18px; }
+      .stage1-tagline-sub { font-size: 13px; }
       .prompt-shell { padding: 13px; border-radius: 14px; }
       .prompt-field { font-size: 16px; padding: 6px 2px; }
-      .prompt-submit { min-height: 46px; font-size: 15px; }
+      .prompt-submit { min-height: 48px; font-size: 15px; }
+      .starter-pill { min-height: 38px; padding: 7px 12px; display: inline-flex; align-items: center; }
       .qualify-grid { padding-top: 18px; gap: 16px; }
       .qualify-row .seg-group { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-      .qualify-row .seg-group .pill-choice { width: 100%; justify-content: center; padding: 8px 10px; font-size: 12.5px; }
+      .qualify-row .seg-group .pill-choice { width: 100%; min-height: 42px; justify-content: center; padding: 8px 10px; font-size: 12.5px; display: inline-flex; align-items: center; }
+      input[type="range"] { height: 6px; }
+      input[type="range"]::-webkit-slider-thumb { width: 24px; height: 24px; }
+      input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; }
+      input[type="text"], input[type="email"], input[type="tel"], input[type="password"],
+      input[type="number"], input[type="date"], textarea.text-input, .text-area,
+      .refine-input, select.select-minimal {
+        font-size: 16px !important;
+      }
+      select.select-minimal {
+        padding-top: 9px !important;
+        padding-bottom: 9px !important;
+        min-height: 44px;
+        max-height: 50px;
+        line-height: 1.25;
+      }
       .mobile-intake-bottom-cta {
         display: flex;
         flex-direction: column;
@@ -2000,7 +2110,7 @@
         margin-top: 2px;
         border-top: 1px solid var(--line);
       }
-      .page-title { font-size: 25px; line-height: 1.18; }
+      .page-title { font-size: 24px; line-height: 1.18; }
       .page-sub { font-size: 14px; line-height: 1.5; }
       .page-head { gap: 12px; margin-bottom: 18px; }
       .page-head-actions { width: 100%; display: flex; flex-direction: column; align-items: stretch; gap: 9px; }
@@ -2018,15 +2128,30 @@
         padding: 8px 11px;
       }
       .refine-actions { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-      .refine-actions > .btn-subtle { justify-content: center; }
+      .refine-actions > .btn-subtle { justify-content: center; min-height: 42px; }
       .refine-actions .view-toggle { grid-column: 1 / -1; }
       .detail-sheet, .panel, .tracker-card, .stage-footer, .launch-anim-card, .portal-role-card, .role-desk-card { padding: 16px 14px; border-radius: 13px; }
-      .modal-backdrop { padding: 10px; }
-      .modal-card { padding: 16px 14px; border-radius: 14px; max-height: 92vh; }
+      .modal-backdrop { padding: 8px; align-items: end; }
+      .modal-card {
+        padding: 16px 14px 22px;
+        border-radius: 16px 16px 12px 12px;
+        max-height: 92dvh;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+      .modal-sticky-head {
+        position: sticky;
+        top: -16px;
+        background: var(--surface);
+        z-index: 4;
+        margin: -16px -14px 14px !important;
+        padding: 14px 14px 12px !important;
+        border-bottom: 1px solid var(--line);
+      }
       .view-toggle { display: flex; flex-wrap: wrap; max-width: 100%; width: 100%; }
-      .view-toggle button { flex: 1 1 auto; text-align: center; padding: 7px 8px; font-size: 12.5px; }
+      .view-toggle button { flex: 1 1 auto; text-align: center; padding: 8px 8px; font-size: 12.5px; min-height: 38px; }
       .view-toggle.sheet-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; gap: 4px; }
-      .view-toggle.sheet-tabs button { white-space: normal; line-height: 1.24; font-size: 12px; padding: 8px 6px; }
+      .view-toggle.sheet-tabs button { white-space: normal; line-height: 1.24; font-size: 12px; padding: 8px 6px; min-height: 42px; display: inline-flex; align-items: center; justify-content: center; }
       .demo-stream-row { grid-template-columns: minmax(0, 1fr) 52px; gap: 6px 10px; }
       .demo-stream-track { grid-column: 1 / -1; height: 7px; }
       .dossier-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; gap: 3px; }
@@ -2034,10 +2159,10 @@
       .crm-right-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; gap: 3px; }
       .crm-right-tabs button { font-size: 12px; padding: 7px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .explorer-filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-      .explorer-filter-grid .select-minimal { width: 100%; min-height: 40px; flex: 0 0 auto; }
+      .explorer-filter-grid .select-minimal { width: 100%; min-height: 44px; flex: 0 0 auto; }
       .explorer-toolbar { padding: 12px 13px; }
       .explorer-toolbar .seg-group { gap: 6px; }
-      .explorer-toolbar .pill-choice { padding: 5px 10px; font-size: 12px; }
+      .explorer-toolbar .pill-choice { padding: 6px 11px; font-size: 12px; min-height: 36px; display: inline-flex; align-items: center; }
       .pro-cat-row {
         flex-wrap: nowrap;
         overflow-x: auto;
@@ -2047,14 +2172,15 @@
         -webkit-overflow-scrolling: touch;
       }
       .pro-cat-row::-webkit-scrollbar { display: none; }
-      .pro-cat-row .pill-choice { flex-shrink: 0; white-space: nowrap; padding: 6px 12px; font-size: 12.5px; }
+      .pro-cat-row .pill-choice { flex-shrink: 0; white-space: nowrap; padding: 7px 13px; font-size: 12.5px; min-height: 38px; display: inline-flex; align-items: center; }
       .roster-controls { width: 100%; justify-content: space-between; padding-top: 10px; margin-top: 4px; border-top: 1px solid var(--line); }
       .portal-role-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
-      .portal-role-pill { width: 100%; text-align: center; padding: 7px 9px; font-size: 12px; }
+      .portal-role-pill { width: 100%; text-align: center; padding: 8px 9px; font-size: 12px; min-height: 38px; }
       .role-privacy-banner { flex-direction: column; align-items: flex-start; gap: 8px; }
-      .doc-req-item { flex-direction: column; align-items: stretch; }
+      .doc-req-item { flex-direction: column; align-items: stretch; padding: 9px 11px; gap: 7px; }
       .doc-req-main { flex: 0 0 auto; }
-      .thread-box { padding-right: 4px; }
+      .doc-req-item button { min-height: 30px; padding: 4px 10px !important; }
+      .thread-box { padding-right: 4px; max-height: 320px; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
       .kv-row > span:last-child, .kv-row > strong { text-align: left; }
       .spec-grid, .form-grid-two, .process-steps, .attr-grid, .portal-cards-grid, .explorer-split.wide-map .portal-cards-grid, .lender-grid { grid-template-columns: minmax(0, 1fr); }
       .portal-card { grid-template-columns: minmax(0, 1fr); display: flex; flex-direction: column; gap: 10px; }
@@ -2069,23 +2195,74 @@
       .btn-primary, .btn-subtle, .btn-danger, .pill-choice, .portal-role-pill { white-space: normal; text-align: center; max-width: 100%; }
       .btn-space-between { text-align: left; justify-content: space-between; }
       .stage-footer-actions { width: 100%; margin-left: 0; }
-      .stage-footer-actions .btn-primary, .stage-footer-actions .btn-subtle { width: 100%; justify-content: center; }
+      .stage-footer-actions .btn-primary, .stage-footer-actions .btn-subtle { width: 100%; justify-content: center; min-height: 46px; }
       .tracker-line-bg { display: none; }
       .tracker-steps { grid-template-columns: minmax(0, 1fr); gap: 6px; }
-      .tracker-step { flex-direction: row; text-align: left; gap: 10px; padding: 7px 9px; background: var(--surface-alt); }
+      .tracker-step { flex-direction: row; text-align: left; gap: 10px; padding: 8px 10px; background: var(--surface-alt); min-height: 42px; }
       .fx-wrap { position: static; }
       .fx-popover { top: calc(100% - 4px); left: 14px; right: 14px; width: auto; max-width: none; }
+      .comp-matrix-wrap { -webkit-overflow-scrolling: touch; }
       .comp-matrix-table { min-width: 560px; }
+      .mobile-stage-dock {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 45;
+        background: var(--bg-glass);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-top: 1px solid var(--line-strong);
+        padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+        display: none;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 4px;
+        box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.08);
+      }
+      .mobile-stage-dock.open { display: grid; }
+      .mobile-dock-btn {
+        appearance: none;
+        border: 1px solid transparent;
+        background: transparent;
+        color: var(--muted);
+        border-radius: 10px;
+        padding: 5px 4px;
+        min-height: 46px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.15;
+        cursor: pointer;
+        transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+      }
+      .mobile-dock-btn.active {
+        background: var(--accent-soft);
+        color: var(--accent-text);
+        border-color: var(--accent);
+        font-weight: 700;
+      }
+      .mobile-dock-num {
+        font-size: 12px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
     }
 
     @media (max-width: 390px) {
-      .concierge-title { font-size: 25px; }
-      .page-title { font-size: 23px; }
+      .concierge-title { font-size: 24.5px; }
+      .hero-tagline-banner { padding: 14px; }
+      .stage1-tagline-headline { font-size: 17px; }
+      .page-title { font-size: 22.5px; }
       .explorer-filter-grid { grid-template-columns: minmax(0, 1fr); }
     }
 
     @media print {
-      .topbar, .refine-strip, .stage-footer, #brief-modal, #listing-dossier-modal, #team-confirm-modal { display: none !important; }
+      .topbar, .refine-strip, .stage-footer, .mobile-stage-dock, #brief-modal, #listing-dossier-modal, #team-confirm-modal { display: none !important; }
       body { background: #ffffff; color: #18181b; }
     }
   </style>
@@ -2141,10 +2318,18 @@
 
   <main class="shell" id="app-root"></main>
 
+  <nav id="mobile-stage-dock" class="mobile-stage-dock" aria-label="Mobile quick stage navigation">
+    <button class="mobile-dock-btn" data-stage="1" type="button"><span class="mobile-dock-num">01</span><span>Areas</span></button>
+    <button class="mobile-dock-btn" data-stage="2" type="button"><span class="mobile-dock-num">02</span><span>Math</span></button>
+    <button class="mobile-dock-btn" data-stage="3" type="button"><span class="mobile-dock-num">03</span><span>Homes</span></button>
+    <button class="mobile-dock-btn" data-stage="4" type="button"><span class="mobile-dock-num">04</span><span>Team</span></button>
+    <button class="mobile-dock-btn" data-stage="5" type="button"><span class="mobile-dock-num">05</span><span>Room</span></button>
+  </nav>
+
   <!-- Export Client Brief Modal -->
   <div class="modal-backdrop" id="brief-modal" role="dialog" aria-modal="true" aria-labelledby="brief-title">
     <div class="modal-card">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:18px;">
+      <div class="modal-sticky-head" style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:18px;">
         <div>
           <span class="badge badge-good">Advisory Brief</span>
           <h2 id="brief-title" class="serif" style="font-size:26px; font-weight:400; margin-top:8px;">Personal Israel Relocation &amp; Deal Brief</h2>
@@ -5204,12 +5389,20 @@
           }
         }
 
+        const showWorkspaceNav = typeof state.stage === "number" && state.stage >= 1 && state.stage !== 5.5;
         const curStageNum = typeof state.stage === "number" ? Math.floor(state.stage) : -1;
         document.querySelectorAll(".stage-tab").forEach(btn => {
           const st = Number(btn.dataset.stage);
           btn.classList.toggle("active", st === curStageNum);
           btn.classList.toggle("done", curStageNum >= 1 && st < curStageNum);
         });
+        const mobDock = document.getElementById("mobile-stage-dock");
+        if (mobDock) {
+          mobDock.classList.toggle("open", showWorkspaceNav);
+          mobDock.querySelectorAll(".mobile-dock-btn").forEach(btn => {
+            btn.classList.toggle("active", Number(btn.dataset.stage) === curStageNum);
+          });
+        }
         const act = document.querySelector(".stage-tab.active");
         const scroller = nav.querySelector(".workspace-nav-inner");
         if (act && scroller && scroller.scrollWidth > scroller.clientWidth) {
@@ -5300,6 +5493,7 @@
         const root = document.getElementById("app-root");
         if (root) {
           root.classList.toggle("shell-explorer", state.stage === 3 && state.stage3ViewMode === "explorer");
+          root.classList.toggle("shell-has-dock", typeof state.stage === "number" && state.stage >= 1 && state.stage !== 5.5);
         }
         if (state.stage === "about") root.innerHTML = renderAboutAtlasPage();
         else if (state.stage === 0) root.innerHTML = renderIntakeStage();
@@ -5548,20 +5742,24 @@
         ];
         return `
           <section class="concierge-wrap stage-anim">
-            <div>
-              <div class="concierge-kicker">Israel Real Estate Advisory · US, Canada, UK, Australia &amp; SA Buyers</div>
-              <h1 class="concierge-title">Where are you starting your Israel move or search?</h1>
-              <p class="concierge-sub">Tell Atlas what matters in plain English—clinics, schools, shuls, train access, yield, or benefits—or pick quick qualifiers below.</p>
+            <div class="hero-tagline-banner" id="hero-tagline-banner">
+              <div class="hero-tagline-top">
+                <div class="concierge-kicker">Israel Real Estate Advisory &middot; US, Canada, UK, Australia &amp; SA</div>
+                <span class="hero-tagline-pill">Clarity First &middot; One Platform</span>
+              </div>
+              <h1 class="concierge-title">Israeli Real Estate, <span class="hero-tagline-accent">Without the Guesswork.</span></h1>
+              <p class="concierge-sub">Taking the stress and confusion out of buying or renting in Israel&mdash;clear neighborhood &amp; community insights, independent property checks, and one pre-vetted Anglo closing team.</p>
             </div>
 
             <div class="prompt-shell">
+              <h2 class="concierge-prompt-title">Where are you starting your Israel move or search?</h2>
               <div class="prompt-row">
                 <input id="intake-prompt" class="prompt-field" type="text" value="${escapeHtml(state.promptText)}"
                   placeholder="e.g., Walkable area near shuls, Anglo schools &amp; Kupat Cholim (~₪3.8M)..." />
                 <button id="btn-launch-guide" class="prompt-submit" type="button">Build My Guide &rarr;</button>
               </div>
               <div class="starter-row">
-                <button class="starter-pill" data-starter="Family making Aliyah near shuls, English schools &amp; Maccabi clinic" type="button">Aliyah Family + Clinics</button>
+                <button class="starter-pill" data-starter="Family making Aliyah near shuls, English schools &amp; Maccabi clinic" type="button">Aliyah Family</button>
                 <button class="starter-pill" data-starter="Remote US buyer looking at liquid Tel Aviv or Netanya yield property under 50% LTV" type="button">Remote Investor (50% LTV)</button>
                 <button class="starter-pill" data-starter="Rent Year-1 near Ra'anana Ulpan before buying" type="button">Year-1 Soft Landing</button>
                 <button class="starter-pill" data-starter="Just exploring Israeli neighborhoods, living costs &amp; lifestyle before deciding" type="button">Just Exploring Israel</button>
@@ -5771,8 +5969,17 @@
               </div>
             </div>
 
+            <div class="stage1-tagline-banner" id="stage1-tagline-banner">
+              <div style="min-width:0;">
+                <div class="stage1-tagline-headline">Israeli Real Estate, <span class="hero-tagline-accent">Without the Guesswork.</span></div>
+                <div class="stage1-tagline-sub">Taking the stress &amp; confusion out of neighborhood fit, community insights, tax math, property checks &amp; vetted partners.</div>
+              </div>
+              <span class="hero-tagline-pill">Atlas Standard</span>
+            </div>
+
             <div class="page-head">
               <div>
+                <div class="concierge-kicker" style="margin-bottom:4px;">Stage 01 &middot; Neighborhood Fit, Maps &amp; Residency Benefits</div>
                 <h1 class="page-title">${isInvestor ? "Investment Corridors &amp; Foreign Buyer Rules" : isRenter ? "Year-1 Landing Hubs &amp; Municipal Rights" : isExploring ? "Explore Anglo Hubs, Living Costs &amp; Tradeoffs" : "Recommended Hubs &amp; Residency Rights"}</h1>
                 <p class="page-sub">${escapeHtml(state.aiCalibrationNote || (isInvestor ? "Ranked by rental liquidity, long-term appreciation corridors, Foreign 50% LTV rules & yield net of HOA." : isExploring ? "Broad community overview across Nefesh B'Nefesh guides, transit links, monthly living costs & schools." : "Ranked by Nefesh B'Nefesh community context, Kupot Cholim clinics, schools & budget."))}</p>
               </div>
@@ -6460,14 +6667,14 @@
         const progressPct = chapters.length ? Math.max(12, Math.round(((wIdx + 1) / chapters.length) * 100)) : 25;
 
         bodyEl.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; margin-bottom:16px;">
-            <div style="min-width:0; flex:1 1 320px;">
+          <div class="modal-sticky-head" style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
+            <div style="min-width:0; flex:1 1 220px;">
               <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                 <span class="concierge-kicker">${escapeHtml(area.name)}, ${escapeHtml(area.city)} &middot; ${escapeHtml(listing.source)}</span>
                 <span class="badge badge-neutral">${isRentUnit ? "Monthly Lease" : "For Sale"}</span>
                 <span class="badge ${badgeCls}">${escapeHtml(listing.guardLabel)}</span>
               </div>
-              <h2 id="dossier-title" class="serif" style="font-size:26px; font-weight:400; line-height:1.2; margin-top:6px;">${escapeHtml(listing.title)}</h2>
+              <h2 id="dossier-title" class="serif" style="font-size:24px; font-weight:400; line-height:1.2; margin-top:6px;">${escapeHtml(listing.title)}</h2>
             </div>
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
               <button class="pill-choice ${isSaved ? "selected" : ""}" data-toggle-save="${listing.id}" type="button" style="padding:7px 14px;">
@@ -8277,11 +8484,11 @@
                       <div class="form-grid-two">
                         <div class="field-group">
                           <label class="field-label" for="inp-fullname">Full Name *</label>
-                          <input id="inp-fullname" class="text-input" type="text" value="${escapeHtml(state.signupDraft.fullName)}" placeholder="Sarah &amp; David Cohen" required />
+                          <input id="inp-fullname" class="text-input" type="text" value="${escapeHtml(state.signupDraft.fullName)}" placeholder="Ariella &amp; Jacob Katz" required />
                         </div>
                         <div class="field-group">
                           <label class="field-label" for="inp-email">Email Address *</label>
-                          <input id="inp-email" class="text-input" type="email" value="${escapeHtml(state.signupDraft.email)}" placeholder="cohen.family@example.com" required />
+                          <input id="inp-email" class="text-input" type="email" value="${escapeHtml(state.signupDraft.email)}" placeholder="katz.family@example.com" required />
                         </div>
                       </div>
 
@@ -9424,7 +9631,7 @@
         const jExpS2 = document.getElementById("btn-s2-explorer");
         if (jExpS2) jExpS2.addEventListener("click", () => jumpToExplorer("all"));
 
-        document.querySelectorAll("[data-stage]").forEach(btn => {
+        document.querySelectorAll("#app-root [data-stage]").forEach(btn => {
           btn.addEventListener("click", () => {
             stopWalkthroughTimer();
             stopCalibrationTimer();
@@ -10489,6 +10696,18 @@
       }
 
       /* ---------------- Global Listeners ---------------- */
+      document.querySelectorAll("#workspace-nav [data-stage], #mobile-stage-dock [data-stage]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          stopWalkthroughTimer();
+          stopCalibrationTimer();
+          stopLaunchTransitionTimer();
+          state.pendingTeamAction = null;
+          state.dossierListingId = null;
+          state.creatingNewRoom = false;
+          state.stage = Number(btn.dataset.stage);
+          render(true);
+        });
+      });
       document.getElementById("brand-home").addEventListener("click", () => { stopWalkthroughTimer(); stopCalibrationTimer(); stopLaunchTransitionTimer(); state.pendingTeamAction = null; state.dossierListingId = null; state.stage = 0; render(true); });
       document.getElementById("btn-back-intake").addEventListener("click", () => { stopWalkthroughTimer(); stopCalibrationTimer(); stopLaunchTransitionTimer(); state.pendingTeamAction = null; state.dossierListingId = null; state.stage = 0; render(true); });
       document.getElementById("btn-about-atlas").addEventListener("click", () => {
